@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Career Resources | JobNest</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<header class="navbar">
+    <div class="nav-container">
+
+        <a href="index.html" class="logo">JobNest<span>.</span></a>
+
+        <nav class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="jobs.html">Find Jobs</a>
+            <a href="companies.html">Companies</a>
+            <a href="resources.html" class="active">Career Resources</a>
+            <a href="post-job.html">Post a Job</a>
+        </nav>
+
+        <div class="nav-actions">
+            <a href="login.html" class="nav-login">Sign In</a>
+            <a href="register.html" class="nav-register">Register</a>
+        </div>
+
+    </div>
+</header>
+
+
+<main class="resources-page">
+
+    <section class="resources-hero">
+        <div class="resources-container">
+
+            <span class="resources-eyebrow">CAREER DEVELOPMENT</span>
+
+            <h1>Small steps today. <span>Big career moves tomorrow.</span></h1>
+
+            <p>
+                Explore practical guides to build your CV, prepare for interviews,
+                and make confident career decisions.
+            </p>
+
+            <a href="#resource-library" class="resources-hero-btn">
+                Explore Resources →
+            </a>
+
+        </div>
+    </section>
+
+
+    <section class="resources-library" id="resource-library">
+
+        <div class="resources-container">
+
+            <div class="resources-heading">
+                <div>
+                    <span class="resources-eyebrow">LEARN AND GROW</span>
+                    <h2>Career guides for your next step</h2>
+                    <p>Choose a topic and find helpful guidance for your career journey.</p>
+                </div>
+            </div>
+
+
+            <div class="resources-search-bar">
+                <input
+                    type="search"
+                    id="resource-search"
+                    placeholder="Search career guides..."
+                    aria-label="Search career guides"
+                >
+
+                <select id="resource-category" aria-label="Filter by category">
+                    <option value="">All topics</option>
+                    <option value="cv">CV & Resume</option>
+                    <option value="interview">Interview Skills</option>
+                    <option value="career">Career Planning</option>
+                </select>
+            </div>
+
+
+            <div class="resources-grid" id="resources-grid">
+
+
+                <!-- CV GUIDE -->
+
+                <article class="resource-card"
+                         data-title="professional cv resume"
+                         data-category="cv">
+
+                    <div class="resource-card-image">
+                        <img
+                            src="https://images.unsplash.com/photo-1586281380349-632531db7ed4?auto=format&fit=crop&w=900&q=80"
+                            alt="Professional resume and documents"
+                            loading="lazy"
+                        >
+                    </div>
+
+                    <div class="resource-card-content">
+
+                        <span class="resource-category">CV & RESUME</span>
+
+                        <h3>How to Write a Professional CV</h3>
+
+                        <p>
+                            Learn how to organize your experience,
+                            highlight your skills, and create a clear,
+                            professional CV.
+                        </p>
+
+                        <a href="resource-details.html?resource=cv-guide"
+                           class="resource-read-link">
+                            Read Guide →
+                        </a>
+
+                    </div>
+                </article>
+
+
+                <!-- INTERVIEW GUIDE -->
+
+                <article class="resource-card"
+                         data-title="interview preparation questions"
+                         data-category="interview">
+
+                    <div class="resource-card-image">
+                        <img
+                            src="https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=900&q=80"
+                            alt="People having a professional meeting"
+                            loading="lazy"
+                        >
+                    </div>
+
+                    <div class="resource-card-content">
+
+                        <span class="resource-category">INTERVIEW SKILLS</span>
+
+                        <h3>Interview Preparation Guide</h3>
+
+                        <p>
+                            Understand common interview questions,
+                            practice your answers, and prepare for
+                            professional conversations.
+                        </p>
+
+                        <a href="resource-details.html?resource=interview-guide"
+                           class="resource-read-link">
+                            Read Guide →
+                        </a>
+
+                    </div>
+                </article>
+
+
+                <!-- CAREER PLANNING -->
+
+                <article class="resource-card"
+                         data-title="choosing right career path planning"
+                         data-category="career">
+
+                    <div class="resource-card-image">
+                        <img
+                            src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=900&q=80"
+                            alt="Professionals collaborating at work"
+                            loading="lazy"
+                        >
+                    </div>
+
+                    <div class="resource-card-content">
+
+                        <span class="resource-category">CAREER PLANNING</span>
+
+                        <h3>Choosing the Right Career Path</h3>
+
+                        <p>
+                            Explore your interests, understand your
+                            strengths, and research career options
+                            that match your goals.
+                        </p>
+
+                        <a href="resource-details.html?resource=career-path"
+                           class="resource-read-link">
+                            Read Guide →
+                        </a>
+
+                    </div>
+                </article>
+
+
+                <!-- JOB SEARCH GUIDE -->
+
+                <article class="resource-card"
+                         data-title="effective job search strategies"
+                         data-category="career">
+
+                    <div class="resource-card-image">
+                        <img
+                            src="https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?auto=format&fit=crop&w=900&q=80"
+                            alt="Laptop being used for job searching"
+                            loading="lazy"
+                        >
+                    </div>
+
+                    <div class="resource-card-content">
+
+                        <span class="resource-category">CAREER PLANNING</span>
+
+                        <h3>How to Search for Jobs Effectively</h3>
+
+                        <p>
+                            Organize your job search, identify suitable
+                            opportunities, and keep track of your
+                            applications.
+                        </p>
+
+                        <a href="resource-details.html?resource=job-search"
+                           class="resource-read-link">
+                            Read Guide →
+                        </a>
+
+                    </div>
+                </article>
+
+
+                <!-- SKILLS GUIDE -->
+
+                <article class="resource-card"
+                         data-title="develop professional skills"
+                         data-category="career">
+
+                    <div class="resource-card-image">
+                        <img
+                            src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=900&q=80"
+                            alt="Students learning and working together"
+                            loading="lazy"
+                        >
+                    </div>
+
+                    <div class="resource-card-content">
+
+                        <span class="resource-category">CAREER PLANNING</span>
+
+                        <h3>Building Skills for Your Career</h3>
+
+                        <p>
+                            Discover ways to develop relevant skills,
+                            learn continuously, and prepare for
+                            changing workplace needs.
+                        </p>
+
+                        <a href="resource-details.html?resource=career-skills"
+                           class="resource-read-link">
+                            Read Guide →
+                        </a>
+
+                    </div>
+                </article>
+
+
+                <!-- FIRST JOB GUIDE -->
+
+                <article class="resource-card"
+                         data-title="first job graduate entry level"
+                         data-category="career">
+
+                    <div class="resource-card-image">
+                        <img
+                            src="https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&w=900&q=80"
+                            alt="Professionals working together"
+                            loading="lazy"
+                        >
+                    </div>
+
+                    <div class="resource-card-content">
+
+                        <span class="resource-category">CAREER PLANNING</span>
+
+                        <h3>Getting Ready for Your First Job</h3>
+
+                        <p>
+                            Learn about workplace expectations,
+                            professional communication, and
+                            preparing for your first role.
+                        </p>
+
+                        <a href="resource-details.html?resource=first-job"
+                           class="resource-read-link">
+                            Read Guide →
+                        </a>
+
+                    </div>
+                </article>
+
+
+            </div>
+
+
+            <div class="resources-empty" id="resources-empty">
+                <h3>No guides found</h3>
+                <p>Try another keyword or select a different topic.</p>
+            </div>
+
+        </div>
+    </section>
+
+
+    <section class="resources-cta">
+        <div class="resources-cta-inner">
+
+            <div>
+                <span class="resources-eyebrow">YOUR NEXT OPPORTUNITY</span>
+                <h2>Ready to put your learning into action?</h2>
+                <p>Explore opportunities and take the next step in your career.</p>
+            </div>
+
+            <a href="jobs.html" class="resources-hero-btn">
+                Find Jobs →
+            </a>
+
+        </div>
+    </section>
+
+</main>
+
+
+<footer class="site-footer">
+
+    <div class="footer-container">
+
+        <div class="footer-brand">
+            <a href="index.html" class="footer-logo">JobNest<span>.</span></a>
+            <p>Made with care to help you find work you love.</p>
+        </div>
+
+        <div class="footer-column">
+            <h4>Job Seekers</h4>
+            <a href="jobs.html">Find Jobs</a>
+            <a href="saved-jobs.html">Saved Jobs</a>
+            <a href="applications.html">My Applications</a>
+            <a href="profile.html">My Profile</a>
+        </div>
+
+        <div class="footer-column">
+            <h4>Employers</h4>
+            <a href="post-job.html">Post a Job</a>
+            <a href="companies.html">Companies</a>
+        </div>
+
+        <div class="footer-column">
+            <h4>JobNest</h4>
+            <a href="resources.html">Career Resources</a>
+            <a href="index.html">About Us</a>
+            <a href="index.html">Contact</a>
+        </div>
+
+    </div>
+
+    <div class="footer-bottom">
+        <p>© 2026 JobNest. All Rights Reserved.</p>
+    </div>
+
+</footer>
+
+
+<script src="js/script.js"></script>
+
+</body>
+</html>

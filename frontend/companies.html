@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Companies | JobNest</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap"
+        rel="stylesheet"
+    >
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<header class="navbar">
+
+    <div class="nav-container">
+
+        <a href="index.html" class="logo">
+            JobNest<span>.</span>
+        </a>
+
+        <nav class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="jobs.html">Find Jobs</a>
+            <a href="companies.html" class="active">Companies</a>
+            <a href="resources.html">Career Resources</a>
+            <a href="post-job.html">Post a Job</a>
+        </nav>
+
+        <div class="nav-actions">
+            <a href="login.html" class="nav-login">Sign In</a>
+            <a href="register.html" class="nav-register">Register</a>
+        </div>
+
+    </div>
+
+</header>
+
+
+<main class="companies-page">
+
+    <section class="companies-page-header">
+
+        <div class="companies-header-inner">
+
+            <span>EXPLORE COMPANIES</span>
+
+            <h1>Find a company where you can grow.</h1>
+
+            <p>
+                Explore companies, discover their work culture,
+                and find opportunities that match your career goals.
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <section class="companies-main">
+
+        <div class="companies-container">
+
+            <div class="companies-search">
+
+                <input
+                    type="text"
+                    id="company-search"
+                    placeholder="Search companies..."
+                >
+
+                <select id="company-category">
+
+                    <option value="">All Industries</option>
+                    <option value="IT">Technology</option>
+                    <option value="Marketing">Marketing</option>
+                    <option value="Design">Design</option>
+                    <option value="Finance">Finance</option>
+                    <option value="Education">Education</option>
+
+                </select>
+
+            </div>
+
+
+            <div
+                id="companies-grid"
+                class="companies-list-grid"
+            >
+
+
+                <!-- TECHNOVA -->
+
+                <article
+                    class="company-list-card"
+                    data-name="technova"
+                    data-category="IT"
+                >
+
+                    <div class="company-list-image">
+
+                        <img
+                            src="https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=900&q=80"
+                            alt="TechNova office"
+                        >
+
+                    </div>
+
+                    <div class="company-list-content">
+
+                        <div class="company-list-logo">
+                            TE
+                        </div>
+
+                        <h2>TechNova Software</h2>
+
+                        <p class="company-industry">
+                            Technology · Lahore
+                        </p>
+
+                        <p>
+                            Building modern software products and
+                            digital solutions for growing businesses.
+                        </p>
+
+                        <div class="company-list-bottom">
+
+                            <span>
+                                2 Open Positions
+                            </span>
+
+                            <a href="company-details.html?company=technova">
+                                View Company →
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </article>
+
+
+                <!-- BRIGHTEDGE -->
+
+                <article
+                    class="company-list-card"
+                    data-name="brightedge media"
+                    data-category="Marketing"
+                >
+
+                    <div class="company-list-image">
+
+                        <img
+                            src="https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=900&q=80"
+                            alt="BrightEdge Media team"
+                        >
+
+                    </div>
+
+                    <div class="company-list-content">
+
+                        <div class="company-list-logo">
+                            BR
+                        </div>
+
+                        <h2>BrightEdge Media</h2>
+
+                        <p class="company-industry">
+                            Marketing · Karachi
+                        </p>
+
+                        <p>
+                            Helping brands grow through creative
+                            campaigns and modern digital marketing.
+                        </p>
+
+                        <div class="company-list-bottom">
+
+                            <span>
+                                1 Open Position
+                            </span>
+
+                            <a href="company-details.html?company=brightedge">
+                                View Company →
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </article>
+
+
+                <!-- PIXELCRAFT -->
+
+                <article
+                    class="company-list-card"
+                    data-name="pixelcraft studio"
+                    data-category="Design"
+                >
+
+                    <div class="company-list-image">
+
+                        <img
+                            src="https://images.unsplash.com/photo-1558655146-d09347e92766?auto=format&fit=crop&w=900&q=80"
+                            alt="PixelCraft Studio"
+                        >
+
+                    </div>
+
+                    <div class="company-list-content">
+
+                        <div class="company-list-logo">
+                            PI
+                        </div>
+
+                        <h2>PixelCraft Studio</h2>
+
+                        <p class="company-industry">
+                            Design · Islamabad
+                        </p>
+
+                        <p>
+                            Creating thoughtful interfaces and
+                            memorable digital experiences.
+                        </p>
+
+                        <div class="company-list-bottom">
+
+                            <span>
+                                2 Open Positions
+                            </span>
+
+                            <a href="company-details.html?company=pixelcraft">
+                                View Company →
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </article>
+
+
+                <!-- FINTRUST -->
+
+                <article
+                    class="company-list-card"
+                    data-name="fintrust bank"
+                    data-category="Finance"
+                >
+
+                    <div class="company-list-image">
+
+                        <img
+                            src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=900&q=80"
+                            alt="FinTrust Bank"
+                        >
+
+                    </div>
+
+                    <div class="company-list-content">
+
+                        <div class="company-list-logo">
+                            FI
+                        </div>
+
+                        <h2>FinTrust Bank</h2>
+
+                        <p class="company-industry">
+                            Finance · Lahore
+                        </p>
+
+                        <p>
+                            Providing modern financial services and
+                            professional banking solutions.
+                        </p>
+
+                        <div class="company-list-bottom">
+
+                            <span>
+                                1 Open Position
+                            </span>
+
+                            <a href="company-details.html?company=fintrust">
+                                View Company →
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </article>
+
+
+                <!-- EDUSPARK -->
+
+                <article
+                    class="company-list-card"
+                    data-name="eduspark"
+                    data-category="Education"
+                >
+
+                    <div class="company-list-image">
+
+                        <img
+                            src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=900&q=80"
+                            alt="EduSpark"
+                        >
+
+                    </div>
+
+                    <div class="company-list-content">
+
+                        <div class="company-list-logo">
+                            ED
+                        </div>
+
+                        <h2>EduSpark</h2>
+
+                        <p class="company-industry">
+                            Education · Remote
+                        </p>
+
+                        <p>
+                            Making online learning more accessible,
+                            engaging, and effective for students.
+                        </p>
+
+                        <div class="company-list-bottom">
+
+                            <span>
+                                1 Open Position
+                            </span>
+
+                            <a href="company-details.html?company=eduspark">
+                                View Company →
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </article>
+
+
+            </div>
+
+
+            <div
+                id="no-companies"
+                class="no-companies"
+            >
+
+                <h3>No companies found</h3>
+
+                <p>
+                    Try a different company name or industry.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<footer class="site-footer">
+
+    <div class="footer-container">
+
+        <div class="footer-brand">
+
+            <a href="index.html" class="footer-logo">
+                JobNest<span>.</span>
+            </a>
+
+            <p>
+                Made with care to help you find work you love.
+            </p>
+
+        </div>
+
+
+        <div class="footer-column">
+
+            <h4>Job Seekers</h4>
+
+            <a href="jobs.html">Find Jobs</a>
+            <a href="saved-jobs.html">Saved Jobs</a>
+            <a href="applications.html">My Applications</a>
+            <a href="profile.html">My Profile</a>
+
+        </div>
+
+
+        <div class="footer-column">
+
+            <h4>Employers</h4>
+
+            <a href="post-job.html">Post a Job</a>
+            <a href="companies.html">Companies</a>
+
+        </div>
+
+
+        <div class="footer-column">
+
+            <h4>JobNest</h4>
+
+            <a href="resources.html">Career Resources</a>
+            <a href="index.html">About Us</a>
+            <a href="index.html">Contact</a>
+
+        </div>
+
+    </div>
+
+
+    <div class="footer-bottom">
+
+        <p>
+            © 2026 JobNest. All Rights Reserved.
+        </p>
+
+    </div>
+
+</footer>
+
+
+<script src="js/script.js"></script>
+
+</body>
+</html>

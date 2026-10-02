@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>My Applications | JobNest</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="applications-page">
+
+<header class="site-header">
+  <nav class="nav-container">
+
+    <a href="index.html" class="logo">
+      JobNest<span>.</span>
+    </a>
+
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="jobs.html">Find Jobs</a>
+      <a href="companies.html">Companies</a>
+      <a href="resources.html">Career Resources</a>
+    </div>
+
+    <div class="nav-actions">
+      <a href="post-job.html" class="nav-login">Post a Job</a>
+      <a href="login.html" class="nav-login">Sign In</a>
+      <a href="register.html" class="nav-register">Register</a>
+    </div>
+
+  </nav>
+</header>
+
+
+<main>
+
+  <!-- PAGE HERO -->
+
+  <section class="applications-hero">
+
+    <div class="applications-hero-content">
+
+      <span class="applications-eyebrow">
+        CANDIDATE DASHBOARD
+      </span>
+
+      <h1>
+        Track your <span>applications.</span>
+      </h1>
+
+      <p>
+        Keep an eye on the opportunities you've applied for and stay organized throughout your job search.
+      </p>
+
+    </div>
+
+  </section>
+
+
+  <!-- APPLICATION CONTENT -->
+
+  <section class="applications-section">
+
+    <div class="applications-container">
+
+      <!-- SUMMARY -->
+
+      <div class="application-stats">
+
+        <div class="application-stat-card">
+          <span class="application-stat-number" id="total-applications">
+            0
+          </span>
+
+          <span class="application-stat-label">
+            Total Applications
+          </span>
+        </div>
+
+
+        <div class="application-stat-card">
+          <span class="application-stat-number" id="pending-applications">
+            0
+          </span>
+
+          <span class="application-stat-label">
+            Pending
+          </span>
+        </div>
+
+
+        <div class="application-stat-card">
+          <span class="application-stat-number" id="review-applications">
+            0
+          </span>
+
+          <span class="application-stat-label">
+            Under Review
+          </span>
+        </div>
+
+
+        <div class="application-stat-card">
+          <span class="application-stat-number" id="interview-applications">
+            0
+          </span>
+
+          <span class="application-stat-label">
+            Interviews
+          </span>
+        </div>
+
+      </div>
+
+
+      <!-- HEADER -->
+
+      <div class="applications-heading">
+
+        <div>
+          <span class="applications-section-label">
+            YOUR JOB SEARCH
+          </span>
+
+          <h2>
+            My Applications
+          </h2>
+
+          <p>
+            View the jobs you've applied for and their current status.
+          </p>
+        </div>
+
+
+        <a href="jobs.html" class="applications-browse-btn">
+          Find More Jobs →
+        </a>
+
+      </div>
+
+
+      <!-- APPLICATION LIST -->
+
+      <div id="applications-list" class="applications-list">
+        <!-- Applications will be inserted by JavaScript -->
+      </div>
+
+
+      <!-- EMPTY STATE -->
+
+      <div id="applications-empty" class="applications-empty">
+
+        <div class="applications-empty-icon">
+          ✓
+        </div>
+
+        <h3>
+          No applications yet
+        </h3>
+
+        <p>
+          When you apply for a job, your applications will appear here so you can easily track them.
+        </p>
+
+        <a href="jobs.html" class="applications-empty-btn">
+          Explore Jobs
+        </a>
+
+      </div>
+
+    </div>
+
+  </section>
+
+</main>
+
+
+<footer class="site-footer">
+
+  <div class="footer-container">
+
+    <div class="footer-brand">
+
+      <a href="index.html" class="logo">
+        JobNest<span>.</span>
+      </a>
+
+      <p>
+        Helping you find opportunities and take the next step in your career.
+      </p>
+
+    </div>
+
+
+    <div class="footer-column">
+
+      <h4>Explore</h4>
+
+      <a href="jobs.html">Find Jobs</a>
+      <a href="companies.html">Companies</a>
+      <a href="resources.html">Career Resources</a>
+
+    </div>
+
+
+    <div class="footer-column">
+
+      <h4>My JobNest</h4>
+
+      <a href="applications.html">Applications</a>
+      <a href="saved-jobs.html">Saved Jobs</a>
+      <a href="profile.html">My Profile</a>
+
+    </div>
+
+
+    <div class="footer-column">
+
+      <h4>For Employers</h4>
+
+      <a href="post-job.html">Post a Job</a>
+      <a href="login.html">Sign In</a>
+      <a href="register.html">Create Account</a>
+
+    </div>
+
+  </div>
+
+
+  <div class="footer-bottom">
+
+    <p>
+      © 2026 JobNest. All Rights Reserved.
+    </p>
+
+  </div>
+
+</footer>
+
+
+<script src="js/script.js"></script>
+
+</body>
+</html>

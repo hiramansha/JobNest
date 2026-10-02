@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>My Profile | JobNest</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap"
+        rel="stylesheet"
+    >
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<header class="navbar">
+
+    <div class="nav-container">
+
+        <a href="index.html" class="logo">
+            JobNest<span>.</span>
+        </a>
+
+        <nav class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="jobs.html">Find Jobs</a>
+            <a href="companies.html">Companies</a>
+            <a href="resources.html">Career Resources</a>
+            <a href="post-job.html">Post a Job</a>
+        </nav>
+
+        <div class="nav-actions">
+            <a href="login.html" class="nav-login">Sign In</a>
+            <a href="register.html" class="nav-register">Register</a>
+        </div>
+
+    </div>
+
+</header>
+
+
+<main class="profile-page">
+
+    <section class="profile-header">
+
+        <div class="profile-header-inner">
+
+            <span>JOBNEST</span>
+
+            <h1>My Profile</h1>
+
+            <p>
+                Keep your professional information up to date.
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <section class="profile-main">
+
+        <div class="profile-container">
+
+            <div class="profile-card">
+
+                <div class="profile-card-top">
+
+                    <div class="profile-avatar">
+                        HM
+                    </div>
+
+                    <div>
+                        <h2 id="profile-display-name">
+                            Hira Mansha
+                        </h2>
+
+                        <p>
+                            Job Seeker
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <form id="profile-form">
+
+                    <div class="profile-form-grid">
+
+                        <div class="profile-field">
+
+                            <label for="profile-name">
+                                Full Name
+                            </label>
+
+                            <input
+                                type="text"
+                                id="profile-name"
+                                value="Hira Mansha"
+                                required
+                            >
+
+                        </div>
+
+
+                        <div class="profile-field">
+
+                            <label for="profile-email">
+                                Email Address
+                            </label>
+
+                            <input
+                                type="email"
+                                id="profile-email"
+                                placeholder="your@email.com"
+                                required
+                            >
+
+                        </div>
+
+
+                        <div class="profile-field">
+
+                            <label for="profile-phone">
+                                Phone Number
+                            </label>
+
+                            <input
+                                type="tel"
+                                id="profile-phone"
+                                placeholder="+92 300 0000000"
+                            >
+
+                        </div>
+
+
+                        <div class="profile-field">
+
+                            <label for="profile-location">
+                                Location
+                            </label>
+
+                            <input
+                                type="text"
+                                id="profile-location"
+                                placeholder="Lahore, Pakistan"
+                            >
+
+                        </div>
+
+
+                        <div class="profile-field">
+
+                            <label for="profile-title">
+                                Professional Title
+                            </label>
+
+                            <input
+                                type="text"
+                                id="profile-title"
+                                placeholder="Frontend Developer"
+                            >
+
+                        </div>
+
+
+                        <div class="profile-field">
+
+                            <label for="profile-experience">
+                                Experience Level
+                            </label>
+
+                            <select id="profile-experience">
+
+                                <option value="">
+                                    Select experience
+                                </option>
+
+                                <option value="entry">
+                                    Entry Level
+                                </option>
+
+                                <option value="mid">
+                                    Mid Level
+                                </option>
+
+                                <option value="senior">
+                                    Senior Level
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="profile-field profile-full-field">
+
+                        <label for="profile-skills">
+                            Skills
+                        </label>
+
+                        <input
+                            type="text"
+                            id="profile-skills"
+                            placeholder="HTML, CSS, JavaScript, React..."
+                        >
+
+                    </div>
+
+
+                    <div class="profile-field profile-full-field">
+
+                        <label for="profile-bio">
+                            About Me
+                        </label>
+
+                        <textarea
+                            id="profile-bio"
+                            rows="5"
+                            placeholder="Write a short professional introduction..."
+                        ></textarea>
+
+                    </div>
+
+
+                    <div class="profile-actions">
+
+                        <button
+                            type="submit"
+                            class="profile-save-btn"
+                        >
+                            Save Profile
+                        </button>
+
+                        <span
+                            id="profile-message"
+                            class="profile-message"
+                        ></span>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+
+            <aside class="profile-side-card">
+
+                <h3>Your JobNest Activity</h3>
+
+                <div class="profile-stat">
+
+                    <strong id="profile-saved-count">
+                        0
+                    </strong>
+
+                    <span>Saved Jobs</span>
+
+                </div>
+
+
+                <div class="profile-stat">
+
+                    <strong id="profile-application-count">
+                        0
+                    </strong>
+
+                    <span>Applications</span>
+
+                </div>
+
+
+                <a href="saved-jobs.html">
+                    View Saved Jobs →
+                </a>
+
+                <a href="applications.html">
+                    View Applications →
+                </a>
+
+            </aside>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<footer class="site-footer">
+
+    <div class="footer-container">
+
+        <div class="footer-brand">
+
+            <a href="index.html" class="footer-logo">
+                JobNest<span>.</span>
+            </a>
+
+            <p>
+                Made with care to help you find work you love.
+            </p>
+
+        </div>
+
+
+        <div class="footer-column">
+
+            <h4>Job Seekers</h4>
+
+            <a href="jobs.html">Find Jobs</a>
+            <a href="saved-jobs.html">Saved Jobs</a>
+            <a href="applications.html">My Applications</a>
+            <a href="profile.html">My Profile</a>
+
+        </div>
+
+
+        <div class="footer-column">
+
+            <h4>Employers</h4>
+
+            <a href="post-job.html">Post a Job</a>
+            <a href="companies.html">Companies</a>
+
+        </div>
+
+
+        <div class="footer-column">
+
+            <h4>JobNest</h4>
+
+            <a href="resources.html">Career Resources</a>
+            <a href="index.html">About Us</a>
+            <a href="index.html">Contact</a>
+
+        </div>
+
+    </div>
+
+
+    <div class="footer-bottom">
+
+        <p>
+            © 2026 JobNest. All Rights Reserved.
+        </p>
+
+    </div>
+
+</footer>
+
+
+<script src="js/script.js"></script>
+
+</body>
+</html>

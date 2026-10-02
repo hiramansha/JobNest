@@ -1,0 +1,101 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In | JobNest</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="auth-page">
+
+<header class="navbar">
+    <div class="nav-container">
+        <a href="index.html" class="logo">JobNest<span>.</span></a>
+        <nav class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="jobs.html">Find Jobs</a>
+            <a href="companies.html">Companies</a>
+            <a href="resources.html">Career Resources</a>
+            <a href="post-job.html">Post a Job</a>
+        </nav>
+        <div class="nav-actions">
+            <a href="login.html" class="nav-login active">Sign In</a>
+            <a href="register.html" class="nav-register">Register</a>
+        </div>
+    </div>
+</header>
+
+<main class="auth-main">
+    <section class="auth-card">
+        <div class="auth-heading">
+            <span class="auth-eyebrow">WELCOME BACK</span>
+            <h1>Sign in to JobNest</h1>
+            <p>Continue your journey and discover new opportunities.</p>
+        </div>
+
+        <form id="login-form" class="auth-form">
+            <label for="login-email">Email address</label>
+            <input
+                type="email"
+                id="login-email"
+                name="email"
+                placeholder="you@example.com"
+                autocomplete="email"
+                required
+            >
+
+            <label for="login-password">Password</label>
+            <input
+                type="password"
+                id="login-password"
+                name="password"
+                placeholder="Enter your password"
+                autocomplete="current-password"
+                minlength="6"
+                required
+            >
+
+            <div class="auth-form-options">
+                <label class="auth-remember">
+                    <input type="checkbox" id="remember-me">
+                    <span>Remember me</span>
+                </label>
+                <a href="#" id="forgot-password">Forgot password?</a>
+            </div>
+
+            <button type="submit" class="auth-submit">Sign In</button>
+            <p id="login-message" class="auth-message" aria-live="polite"></p>
+        </form>
+
+        <p class="auth-switch">
+            Don't have an account?
+            <a href="register.html">Create an account</a>
+        </p>
+
+        <a href="index.html" class="auth-home-link">← Back to Home</a>
+    </section>
+
+    <aside class="auth-side">
+        <div class="auth-side-content">
+            <span class="auth-side-label">YOUR NEXT CHAPTER</span>
+            <h2>Find work that moves you forward.</h2>
+            <p>Explore opportunities, connect with employers, and take your next career step with JobNest.</p>
+            <img
+                src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=1000&q=80"
+                alt="Professionals collaborating in a bright workspace"
+            >
+        </div>
+    </aside>
+</main>
+
+<footer class="auth-footer">
+    <p>© 2026 JobNest. All Rights Reserved.</p>
+</footer>
+
+<script src="js/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,2703 @@
+/* =========================================
+   JOBNEST - MAIN JAVASCRIPT
+========================================= */
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    /* =========================================
+       HERO SEARCH
+    ========================================= */
+
+    const searchForm = document.getElementById("hero-search-form");
+    const keywordInput = document.getElementById("hero-keyword");
+    const locationInput = document.getElementById("hero-location");
+
+    if (searchForm) {
+        searchForm.addEventListener("submit", (event) => {
+            event.preventDefault();
+
+            const keyword = keywordInput?.value.trim() || "";
+            const location = locationInput?.value.trim() || "";
+
+            const params = new URLSearchParams();
+
+            if (keyword) {
+                params.set("keyword", keyword);
+            }
+
+            if (location) {
+                params.set("location", location);
+            }
+
+            window.location.href =
+                `jobs.html${params.toString() ? "?" + params.toString() : ""}`;
+        });
+    }
+
+
+    /* =========================================
+       SAVED JOBS - HOME PAGE
+    ========================================= */
+
+    let savedJobs = JSON.parse(
+        localStorage.getItem("jobnestSavedJobs") || "[]"
+    );
+
+    const saveButtons = document.querySelectorAll(".save-job");
+
+    saveButtons.forEach((button) => {
+
+        const jobCard = button.closest(".job-card");
+
+        if (!jobCard) return;
+
+        const jobTitle =
+            jobCard.querySelector("h3")?.textContent.trim() || "";
+
+        const company =
+            jobCard.querySelector(".company-name")?.textContent.trim() || "";
+
+        const jobId = `${jobTitle}-${company}`.toLowerCase();
+
+        updateSaveButton(button, jobId);
+
+        button.addEventListener("click", (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+
+            const existingIndex = savedJobs.findIndex(
+                (job) => job.id === jobId
+            );
+
+            if (existingIndex !== -1) {
+                savedJobs.splice(existingIndex, 1);
+            } else {
+                savedJobs.push({
+                    id: jobId,
+                    title: jobTitle,
+                    company: company
+                });
+            }
+
+            localStorage.setItem(
+                "jobnestSavedJobs",
+                JSON.stringify(savedJobs)
+            );
+
+            updateSaveButton(button, jobId);
+        });
+    });
+
+
+    function updateSaveButton(button, jobId) {
+
+        const isSaved = savedJobs.some(
+            (job) => job.id === jobId
+        );
+
+        button.textContent = isSaved ? "Saved" : "Save";
+
+        if (isSaved) {
+            button.setAttribute("aria-label", "Remove saved job");
+        } else {
+            button.setAttribute("aria-label", "Save job");
+        }
+    }
+
+
+    /* =========================================
+       JOBS PAGE
+       SEARCH + FILTERS + SORT
+    ========================================= */
+
+    const jobsList = document.getElementById("jobs-list");
+
+    if (jobsList) {
+
+        const jobCards = Array.from(
+            jobsList.querySelectorAll(".job-list-card")
+        );
+
+        const jobSearch =
+            document.getElementById("job-search");
+
+        const locationSearch =
+            document.getElementById("location-search");
+
+        const searchJobsBtn =
+            document.getElementById("search-jobs-btn");
+
+        const sortJobs =
+            document.getElementById("sort-jobs");
+
+        const clearFilters =
+            document.getElementById("clear-filters");
+
+        const resetJobs =
+            document.getElementById("reset-jobs");
+
+        const noJobsMessage =
+            document.getElementById("no-jobs-message");
+
+        const jobsCount =
+            document.getElementById("jobs-count");
+
+        const categoryFilters =
+            document.querySelectorAll(".category-filter");
+
+        const typeFilters =
+            document.querySelectorAll(".type-filter");
+
+        const modeFilters =
+            document.querySelectorAll(".mode-filter");
+
+
+        /* =========================================
+           READ URL SEARCH
+        ========================================= */
+
+        const urlParams =
+            new URLSearchParams(window.location.search);
+
+        const urlKeyword =
+            urlParams.get("keyword") || "";
+
+        const urlLocation =
+            urlParams.get("location") || "";
+
+        if (jobSearch && urlKeyword) {
+            jobSearch.value = urlKeyword;
+        }
+
+        if (locationSearch && urlLocation) {
+            locationSearch.value = urlLocation;
+        }
+
+
+        /* =========================================
+           FILTER JOBS
+        ========================================= */
+
+        function filterJobs() {
+
+            const keyword =
+                jobSearch?.value.trim().toLowerCase() || "";
+
+            const location =
+                locationSearch?.value.trim().toLowerCase() || "";
+
+
+            const selectedCategories =
+                Array.from(categoryFilters)
+                    .filter((checkbox) => checkbox.checked)
+                    .map((checkbox) =>
+                        checkbox.value.toLowerCase()
+                    );
+
+
+            const selectedTypes =
+                Array.from(typeFilters)
+                    .filter((checkbox) => checkbox.checked)
+                    .map((checkbox) =>
+                        checkbox.value.toLowerCase()
+                    );
+
+
+            const selectedModes =
+                Array.from(modeFilters)
+                    .filter((checkbox) => checkbox.checked)
+                    .map((checkbox) =>
+                        checkbox.value.toLowerCase()
+                    );
+
+
+            let visibleJobs = [];
+
+
+            jobCards.forEach((card) => {
+
+                const title =
+                    card.dataset.title?.toLowerCase() || "";
+
+                const category =
+                    card.dataset.category?.toLowerCase() || "";
+
+                const type =
+                    card.dataset.type?.toLowerCase() || "";
+
+                const mode =
+                    card.dataset.mode?.toLowerCase() || "";
+
+                const cardLocation =
+                    card.dataset.location?.toLowerCase() || "";
+
+
+                const matchesKeyword =
+                    !keyword ||
+                    title.includes(keyword) ||
+                    category.includes(keyword);
+
+
+                const matchesLocation =
+                    !location ||
+                    cardLocation === location;
+
+
+                const matchesCategory =
+                    selectedCategories.length === 0 ||
+                    selectedCategories.includes(category);
+
+
+                const matchesType =
+                    selectedTypes.length === 0 ||
+                    selectedTypes.includes(type);
+
+
+                const matchesMode =
+                    selectedModes.length === 0 ||
+                    selectedModes.includes(mode);
+
+
+                const shouldShow =
+                    matchesKeyword &&
+                    matchesLocation &&
+                    matchesCategory &&
+                    matchesType &&
+                    matchesMode;
+
+
+                if (shouldShow) {
+
+                    card.style.display = "grid";
+                    visibleJobs.push(card);
+
+                } else {
+
+                    card.style.display = "none";
+
+                }
+
+            });
+
+
+            /* =========================================
+               UPDATE JOB COUNT
+            ========================================= */
+
+            if (jobsCount) {
+
+                jobsCount.textContent =
+                    `${visibleJobs.length} ${
+                        visibleJobs.length === 1
+                            ? "opportunity"
+                            : "opportunities"
+                    } found`;
+
+            }
+
+
+            /* =========================================
+               NO RESULTS
+            ========================================= */
+
+            if (noJobsMessage) {
+
+                if (visibleJobs.length === 0) {
+                    noJobsMessage.style.display = "block";
+                } else {
+                    noJobsMessage.style.display = "none";
+                }
+
+            }
+
+        }
+
+
+        /* =========================================
+           SEARCH BUTTON
+        ========================================= */
+
+        if (searchJobsBtn) {
+
+            searchJobsBtn.addEventListener("click", () => {
+
+                filterJobs();
+
+                const params =
+                    new URLSearchParams();
+
+                const keyword =
+                    jobSearch?.value.trim() || "";
+
+                const location =
+                    locationSearch?.value.trim() || "";
+
+
+                if (keyword) {
+                    params.set("keyword", keyword);
+                }
+
+                if (location) {
+                    params.set("location", location);
+                }
+
+
+                const newUrl =
+                    `${window.location.pathname}${
+                        params.toString()
+                            ? "?" + params.toString()
+                            : ""
+                    }`;
+
+                window.history.replaceState(
+                    {},
+                    "",
+                    newUrl
+                );
+
+            });
+
+        }
+
+
+        /* =========================================
+           SEARCH WITH ENTER
+        ========================================= */
+
+        if (jobSearch) {
+
+            jobSearch.addEventListener(
+                "keydown",
+                (event) => {
+
+                    if (event.key === "Enter") {
+
+                        event.preventDefault();
+
+                        searchJobsBtn?.click();
+
+                    }
+
+                }
+            );
+
+        }
+
+
+        /* =========================================
+           LOCATION CHANGE
+        ========================================= */
+
+        if (locationSearch) {
+
+            locationSearch.addEventListener(
+                "change",
+                filterJobs
+            );
+
+        }
+
+
+        /* =========================================
+           CHECKBOX FILTERS
+        ========================================= */
+
+        categoryFilters.forEach((checkbox) => {
+
+            checkbox.addEventListener(
+                "change",
+                filterJobs
+            );
+
+        });
+
+
+        typeFilters.forEach((checkbox) => {
+
+            checkbox.addEventListener(
+                "change",
+                filterJobs
+            );
+
+        });
+
+
+        modeFilters.forEach((checkbox) => {
+
+            checkbox.addEventListener(
+                "change",
+                filterJobs
+            );
+
+        });
+
+
+        /* =========================================
+           SORT JOBS
+        ========================================= */
+
+        if (sortJobs) {
+
+            sortJobs.addEventListener(
+                "change",
+                () => {
+
+                    const sortValue =
+                        sortJobs.value;
+
+
+                    if (sortValue === "salary-high") {
+
+                        jobCards.sort(
+                            (a, b) =>
+                                Number(b.dataset.salary || 0) -
+                                Number(a.dataset.salary || 0)
+                        );
+
+                    }
+
+
+                    if (sortValue === "salary-low") {
+
+                        jobCards.sort(
+                            (a, b) =>
+                                Number(a.dataset.salary || 0) -
+                                Number(b.dataset.salary || 0)
+                        );
+
+                    }
+
+
+                    if (sortValue === "latest") {
+
+                        jobCards.sort(
+                            (a, b) =>
+                                jobCards.indexOf(a) -
+                                jobCards.indexOf(b)
+                        );
+
+                    }
+
+
+                    jobCards.forEach((card) => {
+                        jobsList.appendChild(card);
+                    });
+
+
+                    filterJobs();
+
+                }
+            );
+
+        }
+
+
+        /* =========================================
+           CLEAR ALL FILTERS
+        ========================================= */
+
+        if (clearFilters) {
+
+            clearFilters.addEventListener(
+                "click",
+                () => {
+
+                    if (jobSearch) {
+                        jobSearch.value = "";
+                    }
+
+                    if (locationSearch) {
+                        locationSearch.value = "";
+                    }
+
+
+                    categoryFilters.forEach(
+                        (checkbox) => {
+                            checkbox.checked = false;
+                        }
+                    );
+
+
+                    typeFilters.forEach(
+                        (checkbox) => {
+                            checkbox.checked = false;
+                        }
+                    );
+
+
+                    modeFilters.forEach(
+                        (checkbox) => {
+                            checkbox.checked = false;
+                        }
+                    );
+
+
+                    if (sortJobs) {
+                        sortJobs.value = "latest";
+                    }
+
+
+                    window.history.replaceState(
+                        {},
+                        "",
+                        window.location.pathname
+                    );
+
+
+                    filterJobs();
+
+                }
+            );
+
+        }
+
+
+        /* =========================================
+           RESET SEARCH
+        ========================================= */
+
+        if (resetJobs) {
+
+            resetJobs.addEventListener(
+                "click",
+                () => {
+
+                    clearFilters?.click();
+
+                }
+            );
+
+        }
+
+
+        /* =========================================
+           JOBS PAGE SAVE BUTTONS
+        ========================================= */
+
+        const jobsSaveButtons =
+            document.querySelectorAll(".save-job-btn");
+
+
+        jobsSaveButtons.forEach((button) => {
+
+            const jobCard =
+                button.closest(".job-list-card");
+
+            if (!jobCard) return;
+
+
+            const jobTitle =
+                jobCard.dataset.title || "";
+
+            const company =
+                jobCard.querySelector(
+                    ".job-company"
+                )?.textContent.trim() || "";
+
+
+            const jobId =
+                `${jobTitle}-${company}`.toLowerCase();
+
+
+            updateJobPageSaveButton(
+                button,
+                jobId
+            );
+
+
+            button.addEventListener(
+                "click",
+                (event) => {
+
+                    event.preventDefault();
+                    event.stopPropagation();
+
+
+                    const existingIndex =
+                        savedJobs.findIndex(
+                            (job) =>
+                                job.id === jobId
+                        );
+
+
+                    if (existingIndex !== -1) {
+
+                        savedJobs.splice(
+                            existingIndex,
+                            1
+                        );
+
+                    } else {
+
+                        savedJobs.push({
+                            id: jobId,
+                            title: jobTitle,
+                            company: company
+                        });
+
+                    }
+
+
+                    localStorage.setItem(
+                        "jobnestSavedJobs",
+                        JSON.stringify(savedJobs)
+                    );
+
+
+                    updateJobPageSaveButton(
+                        button,
+                        jobId
+                    );
+
+                }
+            );
+
+        });
+
+
+        function updateJobPageSaveButton(
+            button,
+            jobId
+        ) {
+
+            const isSaved =
+                savedJobs.some(
+                    (job) =>
+                        job.id === jobId
+                );
+
+
+            button.textContent =
+                isSaved ? "Saved" : "Save";
+
+
+            if (isSaved) {
+
+                button.classList.add("saved");
+
+            } else {
+
+                button.classList.remove("saved");
+
+            }
+
+        }
+
+
+        /* =========================================
+           INITIAL FILTER
+        ========================================= */
+
+        filterJobs();
+
+    }
+
+
+    /* =========================================
+       POPULAR SEARCH LINKS
+    ========================================= */
+
+    const popularLinks =
+        document.querySelectorAll(
+            ".popular-searches a"
+        );
+
+
+    popularLinks.forEach((link) => {
+
+        link.addEventListener("click", () => {
+
+            const url =
+                new URL(
+                    link.href,
+                    window.location.origin
+                );
+
+
+            const keyword =
+                url.searchParams.get("keyword");
+
+
+            if (keyword) {
+
+                localStorage.setItem(
+                    "jobnestLastSearch",
+                    keyword
+                );
+
+            }
+
+        });
+
+    });
+
+
+    /* =========================================
+       SIMPLE SCROLL ANIMATION
+    ========================================= */
+
+    const animatedItems =
+        document.querySelectorAll(
+            ".category-card, .job-card, .company-card, .resource-link"
+        );
+
+
+    if ("IntersectionObserver" in window) {
+
+        const observer =
+            new IntersectionObserver(
+                (entries) => {
+
+                    entries.forEach((entry) => {
+
+                        if (entry.isIntersecting) {
+
+                            entry.target.style.opacity =
+                                "1";
+
+                            entry.target.style.transform =
+                                "translateY(0)";
+
+                            observer.unobserve(
+                                entry.target
+                            );
+
+                        }
+
+                    });
+
+                },
+                {
+                    threshold: 0.12
+                }
+            );
+
+
+        animatedItems.forEach((item) => {
+
+            item.style.opacity = "0";
+
+            item.style.transform =
+                "translateY(20px)";
+
+            item.style.transition =
+                "opacity 0.5s ease, transform 0.5s ease";
+
+            observer.observe(item);
+
+        });
+
+    }
+
+
+    /* =========================================
+       ACTIVE NAVIGATION
+    ========================================= */
+
+    const currentPage =
+        window.location.pathname
+            .split("/")
+            .pop() || "index.html";
+
+
+    const navigationLinks =
+        document.querySelectorAll(
+            ".nav-links a"
+        );
+
+
+    navigationLinks.forEach((link) => {
+
+        const linkPage =
+            link.getAttribute("href")
+                ?.split("?")[0];
+
+
+        if (linkPage === currentPage) {
+
+            link.classList.add("active");
+
+        }
+
+    });
+
+
+    /* =========================================
+       LOG
+    ========================================= */
+
+    console.log(
+        "JobNest frontend initialized successfully."
+    );
+
+});
+
+/* =====================================================
+   JOB DETAILS DATA
+===================================================== */
+
+const jobDetailsData = {
+
+    "frontend-developer": {
+        title: "Frontend Developer",
+        company: "TechNova",
+        logo: "TE",
+        location: "Lahore",
+        type: "Full-time",
+        mode: "On-site",
+        category: "IT",
+        salary: "PKR 150k – 250k / month",
+        image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1200&q=80",
+        description:
+            "We are looking for a talented Frontend Developer to create modern, responsive, and user-friendly web applications. You will work with designers and backend developers to build high-quality digital experiences.",
+        companyDescription:
+            "TechNova is a growing technology company focused on building modern software products and digital solutions."
+    },
+
+    "backend-engineer": {
+        title: "Backend Engineer",
+        company: "TechNova",
+        logo: "TE",
+        location: "Remote",
+        type: "Full-time",
+        mode: "Remote",
+        category: "IT",
+        salary: "PKR 250k – 400k / month",
+        image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=1200&q=80",
+        description:
+            "TechNova is looking for a Backend Engineer to develop reliable APIs, server-side applications, and database solutions. You will help build secure and scalable systems used by modern digital products.",
+        companyDescription:
+            "TechNova is a growing technology company focused on building modern software products and digital solutions."
+    },
+
+    "digital-marketing": {
+        title: "Digital Marketing Executive",
+        company: "BrightEdge Media",
+        logo: "BR",
+        location: "Karachi",
+        type: "Full-time",
+        mode: "On-site",
+        category: "Marketing",
+        salary: "PKR 80k – 120k / month",
+        image: "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1200&q=80",
+        description:
+            "BrightEdge Media is seeking a creative Digital Marketing Executive to help develop marketing campaigns, manage digital channels, and improve online engagement.",
+        companyDescription:
+            "BrightEdge Media is a creative marketing company helping brands grow through digital campaigns and modern marketing strategies."
+    },
+
+    "ui-ux-designer": {
+        title: "UI/UX Designer",
+        company: "PixelCraft Studio",
+        logo: "PI",
+        location: "Islamabad",
+        type: "Full-time",
+        mode: "On-site",
+        category: "Design",
+        salary: "PKR 120k – 200k / month",
+        image: "https://images.unsplash.com/photo-1559028012-481c04fa702d?auto=format&fit=crop&w=1200&q=80",
+        description:
+            "PixelCraft Studio is looking for a UI/UX Designer who can transform ideas into simple, attractive, and user-friendly digital experiences.",
+        companyDescription:
+            "PixelCraft Studio is a creative design studio specializing in user interfaces, digital experiences, and visual design."
+    },
+
+    "financial-analyst": {
+        title: "Financial Analyst",
+        company: "FinTrust Bank",
+        logo: "FI",
+        location: "Lahore",
+        type: "Full-time",
+        mode: "On-site",
+        category: "Finance",
+        salary: "PKR 130k – 190k / month",
+        image: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=1200&q=80",
+        description:
+            "FinTrust Bank is seeking a Financial Analyst to analyze financial information, prepare reports, and support business decision-making through accurate data analysis.",
+        companyDescription:
+            "FinTrust Bank provides financial services and solutions while supporting businesses and individuals with modern banking products."
+    },
+
+    "online-math-tutor": {
+        title: "Online Math Tutor",
+        company: "EduSpark",
+        logo: "ED",
+        location: "Remote",
+        type: "Part-time",
+        mode: "Remote",
+        category: "Education",
+        salary: "PKR 40k – 70k / month",
+        image: "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1200&q=80",
+        description:
+            "EduSpark is looking for an enthusiastic Online Math Tutor to teach students through engaging online lessons and help them develop strong mathematical skills.",
+        companyDescription:
+            "EduSpark is an education platform focused on accessible online learning and helping students improve their academic skills."
+    }
+
+};
+
+
+/* =====================================================
+   LOAD SELECTED JOB
+===================================================== */
+
+function loadJobDetails() {
+
+    const jobTitleElement = document.getElementById("detail-job-title");
+
+    if (!jobTitleElement) {
+        return;
+    }
+
+    const params = new URLSearchParams(window.location.search);
+
+    const jobId = params.get("job") || "frontend-developer";
+
+    const job = jobDetailsData[jobId];
+
+    if (!job) {
+        return;
+    }
+
+
+    /* JOB TITLE */
+
+    const title = document.getElementById("detail-job-title");
+
+    if (title) {
+        title.textContent = job.title;
+    }
+
+
+    /* COMPANY */
+
+    const company = document.getElementById("detail-company");
+
+    if (company) {
+        company.textContent = job.company;
+    }
+
+
+    /* COMPANY LOGO */
+
+    const logo = document.getElementById("detail-company-logo");
+
+    if (logo) {
+        logo.textContent = job.logo;
+    }
+
+
+    /* JOB IMAGE */
+
+    const image = document.getElementById("detail-job-image");
+
+    if (image) {
+        image.src = job.image;
+        image.alt = job.title;
+    }
+
+
+    /* DESCRIPTION */
+
+    const description = document.getElementById("detail-description");
+
+    if (description) {
+        description.textContent = job.description;
+    }
+
+
+    /* JOB TYPE */
+
+    const type = document.getElementById("detail-job-type");
+
+    if (type) {
+        type.textContent = job.type;
+    }
+
+
+    /* LOCATION */
+
+    const location = document.getElementById("detail-location");
+
+    if (location) {
+        location.textContent = job.location;
+    }
+
+
+    /* WORK MODE */
+
+    const mode = document.getElementById("detail-work-mode");
+
+    if (mode) {
+        mode.textContent = job.mode;
+    }
+
+
+    /* CATEGORY */
+
+    const category = document.getElementById("detail-category");
+
+    if (category) {
+        category.textContent = job.category;
+    }
+
+
+    /* SALARY */
+
+    const salary = document.getElementById("detail-salary");
+
+    if (salary) {
+        salary.textContent = job.salary;
+    }
+
+
+    /* SIDEBAR COMPANY LOGO */
+
+    const sidebarLogo =
+        document.getElementById("sidebar-company-logo");
+
+    if (sidebarLogo) {
+        sidebarLogo.textContent = job.logo;
+    }
+
+
+    /* SIDEBAR COMPANY NAME */
+
+    const sidebarCompany =
+        document.getElementById("sidebar-company-name");
+
+    if (sidebarCompany) {
+        sidebarCompany.textContent = job.company;
+    }
+
+
+    /* SIDEBAR COMPANY DESCRIPTION */
+
+    const sidebarDescription =
+        document.getElementById("sidebar-company-description");
+
+    if (sidebarDescription) {
+        sidebarDescription.textContent =
+            job.companyDescription;
+    }
+
+
+    /* PAGE TITLE */
+
+    document.title = `${job.title} | JobNest`;
+
+
+    /* SAVE BUTTON */
+
+    const saveButton =
+        document.getElementById("detail-save-job");
+
+    if (saveButton) {
+
+        let savedJobs =
+            JSON.parse(
+                localStorage.getItem("jobnestSavedJobs") || "[]"
+            );
+
+        const alreadySaved = savedJobs.some(
+            savedJob => savedJob.title === job.title
+        );
+
+        if (alreadySaved) {
+            saveButton.textContent = "Saved";
+            saveButton.classList.add("saved");
+        }
+
+        saveButton.addEventListener("click", function () {
+
+            let currentSavedJobs =
+                JSON.parse(
+                    localStorage.getItem("jobnestSavedJobs") || "[]"
+                );
+
+            const index = currentSavedJobs.findIndex(
+                savedJob => savedJob.title === job.title
+            );
+
+            if (index === -1) {
+
+                currentSavedJobs.push({
+                    title: job.title,
+                    company: job.company,
+                    location: job.location,
+                    salary: job.salary
+                });
+
+                localStorage.setItem(
+                    "jobnestSavedJobs",
+                    JSON.stringify(currentSavedJobs)
+                );
+
+                saveButton.textContent = "Saved";
+                saveButton.classList.add("saved");
+
+            } else {
+
+                currentSavedJobs.splice(index, 1);
+
+                localStorage.setItem(
+                    "jobnestSavedJobs",
+                    JSON.stringify(currentSavedJobs)
+                );
+
+                saveButton.textContent = "Save Job";
+                saveButton.classList.remove("saved");
+            }
+
+        });
+    }
+
+}
+
+
+/* =====================================================
+   START JOB DETAILS
+===================================================== */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    loadJobDetails
+);
+
+/* =====================================================
+   APPLICATIONS PAGE
+===================================================== */
+
+function loadApplications() {
+
+    const applicationsList =
+        document.getElementById("applications-list");
+
+    if (!applicationsList) {
+        return;
+    }
+
+    const noApplications =
+        document.getElementById("no-applications");
+
+    const applicationsCount =
+        document.getElementById("applications-count");
+
+    const applications =
+        JSON.parse(
+            localStorage.getItem("jobnestApplications") || "[]"
+        );
+
+
+    applicationsList.innerHTML = "";
+
+
+    if (applicationsCount) {
+        applicationsCount.textContent =
+            `${applications.length} application${applications.length === 1 ? "" : "s"}`;
+    }
+
+
+    if (applications.length === 0) {
+
+        noApplications.style.display = "block";
+
+        return;
+    }
+
+
+    noApplications.style.display = "none";
+
+
+    applications.forEach(function (application) {
+
+        const card = document.createElement("div");
+
+        card.className = "application-card";
+
+        card.innerHTML = `
+            <div class="application-logo">
+                ${application.logo || "JN"}
+            </div>
+
+            <div class="application-info">
+
+                <h3>
+                    ${application.title}
+                </h3>
+
+                <p class="application-company">
+                    ${application.company}
+                </p>
+
+                <div class="application-meta">
+                    <span>${application.location}</span>
+                    <span>${application.type}</span>
+                    <span>${application.salary}</span>
+                </div>
+
+            </div>
+
+            <div class="application-status">
+                Application Sent
+            </div>
+        `;
+
+        applicationsList.appendChild(card);
+
+    });
+
+}
+
+
+/* =====================================================
+   START APPLICATIONS
+===================================================== */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    loadApplications
+);
+
+/* =====================================================
+   APPLY NOW
+===================================================== */
+
+function setupApplyButton() {
+
+    const applyButton =
+        document.getElementById("apply-job-btn");
+
+    if (!applyButton) {
+        return;
+    }
+
+    applyButton.addEventListener("click", function (event) {
+
+        event.preventDefault();
+
+        const params =
+            new URLSearchParams(window.location.search);
+
+        const jobId =
+            params.get("job") || "frontend-developer";
+
+        const job =
+            jobDetailsData[jobId];
+
+        if (!job) {
+            window.location.href = "applications.html";
+            return;
+        }
+
+
+        /* GET EXISTING APPLICATIONS */
+
+        let applications =
+            JSON.parse(
+                localStorage.getItem("jobnestApplications") || "[]"
+            );
+
+
+        /* CHECK IF ALREADY APPLIED */
+
+        const alreadyApplied =
+            applications.some(function (application) {
+
+                return application.jobId === jobId;
+
+            });
+
+
+        if (alreadyApplied) {
+
+            window.location.href = "applications.html";
+
+            return;
+        }
+
+
+        /* ADD NEW APPLICATION */
+
+        applications.push({
+
+            jobId: jobId,
+            title: job.title,
+            company: job.company,
+            logo: job.logo,
+            location: job.location,
+            type: job.type,
+            mode: job.mode,
+            category: job.category,
+            salary: job.salary,
+            appliedAt: new Date().toISOString()
+
+        });
+
+
+        /* SAVE APPLICATION */
+
+        localStorage.setItem(
+            "jobnestApplications",
+            JSON.stringify(applications)
+        );
+
+
+        /* OPEN APPLICATIONS PAGE */
+
+        window.location.href = "applications.html";
+
+    });
+
+}
+
+
+/* =====================================================
+   START APPLY BUTTON
+===================================================== */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    setupApplyButton
+);
+
+/* =====================================================
+   SAVED JOBS PAGE
+===================================================== */
+
+function loadSavedJobsPage() {
+
+    const savedJobsList =
+        document.getElementById("saved-jobs-list");
+
+    if (!savedJobsList) {
+        return;
+    }
+
+    const noSavedJobs =
+        document.getElementById("no-saved-jobs");
+
+    const savedJobsCount =
+        document.getElementById("saved-jobs-count");
+
+    let savedJobs =
+        JSON.parse(
+            localStorage.getItem("jobnestSavedJobs") || "[]"
+        );
+
+
+    savedJobsList.innerHTML = "";
+
+
+    if (savedJobsCount) {
+        savedJobsCount.textContent =
+            `${savedJobs.length} saved job${savedJobs.length === 1 ? "" : "s"}`;
+    }
+
+
+    if (savedJobs.length === 0) {
+
+        noSavedJobs.style.display = "block";
+
+        return;
+    }
+
+
+    noSavedJobs.style.display = "none";
+
+
+    savedJobs.forEach(function (job, index) {
+
+        const card =
+            document.createElement("div");
+
+        card.className = "saved-job-card";
+
+        const jobSlug =
+            job.jobId ||
+            job.title
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, "-")
+                .replace(/^-|-$/g, "");
+
+
+        card.innerHTML = `
+            <div class="saved-job-logo">
+                ${job.logo || "JN"}
+            </div>
+
+            <div class="saved-job-info">
+
+                <h3>
+                    ${job.title}
+                </h3>
+
+                <p class="saved-job-company">
+                    ${job.company}
+                </p>
+
+                <div class="saved-job-meta">
+                    <span>${job.location}</span>
+                    <span>${job.salary}</span>
+                </div>
+
+            </div>
+
+            <div class="saved-job-actions">
+
+                <a
+                    href="job-details.html?job=${jobSlug}"
+                    class="saved-job-view"
+                >
+                    View Job
+                </a>
+
+                <button
+                    type="button"
+                    class="saved-job-remove"
+                    data-index="${index}"
+                >
+                    Remove
+                </button>
+
+            </div>
+        `;
+
+        savedJobsList.appendChild(card);
+
+    });
+
+
+    /* REMOVE SAVED JOB */
+
+    document
+        .querySelectorAll(".saved-job-remove")
+        .forEach(function (button) {
+
+            button.addEventListener(
+                "click",
+                function () {
+
+                    const index =
+                        Number(button.dataset.index);
+
+                    savedJobs.splice(index, 1);
+
+                    localStorage.setItem(
+                        "jobnestSavedJobs",
+                        JSON.stringify(savedJobs)
+                    );
+
+                    loadSavedJobsPage();
+
+                }
+            );
+
+        });
+
+}
+
+
+/* =====================================================
+   START SAVED JOBS PAGE
+===================================================== */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    loadSavedJobsPage
+);
+
+/* =====================================================
+   PROFILE PAGE
+===================================================== */
+
+function loadProfilePage() {
+
+    const profileForm =
+        document.getElementById("profile-form");
+
+    if (!profileForm) {
+        return;
+    }
+
+    const savedProfile =
+        JSON.parse(
+            localStorage.getItem("jobnestProfile") || "null"
+        );
+
+
+    if (savedProfile) {
+
+        document.getElementById("profile-name").value =
+            savedProfile.name || "";
+
+        document.getElementById("profile-email").value =
+            savedProfile.email || "";
+
+        document.getElementById("profile-phone").value =
+            savedProfile.phone || "";
+
+        document.getElementById("profile-location").value =
+            savedProfile.location || "";
+
+        document.getElementById("profile-title").value =
+            savedProfile.title || "";
+
+        document.getElementById("profile-experience").value =
+            savedProfile.experience || "";
+
+        document.getElementById("profile-skills").value =
+            savedProfile.skills || "";
+
+        document.getElementById("profile-bio").value =
+            savedProfile.bio || "";
+
+        updateProfileName(savedProfile.name);
+
+    }
+
+
+    profileForm.addEventListener(
+        "submit",
+        function (event) {
+
+            event.preventDefault();
+
+            const profile = {
+
+                name:
+                    document.getElementById("profile-name").value.trim(),
+
+                email:
+                    document.getElementById("profile-email").value.trim(),
+
+                phone:
+                    document.getElementById("profile-phone").value.trim(),
+
+                location:
+                    document.getElementById("profile-location").value.trim(),
+
+                title:
+                    document.getElementById("profile-title").value.trim(),
+
+                experience:
+                    document.getElementById("profile-experience").value,
+
+                skills:
+                    document.getElementById("profile-skills").value.trim(),
+
+                bio:
+                    document.getElementById("profile-bio").value.trim()
+
+            };
+
+
+            localStorage.setItem(
+                "jobnestProfile",
+                JSON.stringify(profile)
+            );
+
+
+            updateProfileName(profile.name);
+
+
+            const message =
+                document.getElementById("profile-message");
+
+            if (message) {
+
+                message.textContent =
+                    "Profile saved successfully.";
+
+                setTimeout(function () {
+                    message.textContent = "";
+                }, 2500);
+
+            }
+
+        }
+    );
+
+
+    updateProfileStats();
+
+}
+
+
+function updateProfileName(name) {
+
+    const displayName =
+        document.getElementById("profile-display-name");
+
+    if (displayName && name) {
+        displayName.textContent = name;
+    }
+
+}
+
+
+function updateProfileStats() {
+
+    const savedJobs =
+        JSON.parse(
+            localStorage.getItem("jobnestSavedJobs") || "[]"
+        );
+
+    const applications =
+        JSON.parse(
+            localStorage.getItem("jobnestApplications") || "[]"
+        );
+
+
+    const savedCount =
+        document.getElementById("profile-saved-count");
+
+    const applicationCount =
+        document.getElementById("profile-application-count");
+
+
+    if (savedCount) {
+        savedCount.textContent = savedJobs.length;
+    }
+
+    if (applicationCount) {
+        applicationCount.textContent = applications.length;
+    }
+
+}
+
+
+document.addEventListener(
+    "DOMContentLoaded",
+    loadProfilePage
+);
+
+/* =====================================================
+   COMPANIES PAGE SEARCH
+===================================================== */
+
+function setupCompaniesPage() {
+
+    const searchInput =
+        document.getElementById("company-search");
+
+    const categorySelect =
+        document.getElementById("company-category");
+
+    const companies =
+        document.querySelectorAll(".company-list-card");
+
+    const noCompanies =
+        document.getElementById("no-companies");
+
+
+    if (!searchInput || !categorySelect) {
+        return;
+    }
+
+
+    function filterCompanies() {
+
+        const searchValue =
+            searchInput.value
+                .trim()
+                .toLowerCase();
+
+        const categoryValue =
+            categorySelect.value
+                .trim()
+                .toLowerCase();
+
+        let visibleCount = 0;
+
+
+        companies.forEach(function (company) {
+
+            const name =
+                company.dataset.name.toLowerCase();
+
+            const category =
+                company.dataset.category.toLowerCase();
+
+
+            const matchesSearch =
+                !searchValue ||
+                name.includes(searchValue);
+
+            const matchesCategory =
+                !categoryValue ||
+                category === categoryValue;
+
+
+            if (matchesSearch && matchesCategory) {
+
+                company.style.display = "";
+
+                visibleCount++;
+
+            } else {
+
+                company.style.display = "none";
+
+            }
+
+        });
+
+
+        if (noCompanies) {
+
+            noCompanies.style.display =
+                visibleCount === 0
+                    ? "block"
+                    : "none";
+
+        }
+
+    }
+
+
+    searchInput.addEventListener(
+        "input",
+        filterCompanies
+    );
+
+    categorySelect.addEventListener(
+        "change",
+        filterCompanies
+    );
+
+}
+
+
+document.addEventListener(
+    "DOMContentLoaded",
+    setupCompaniesPage
+);
+
+/* =====================================================
+   COMPANY DETAILS DATA
+===================================================== */
+
+const companyDetailsData = {
+
+    technova: {
+        name: "TechNova Software",
+        logo: "TE",
+        industry: "Technology",
+        location: "Lahore",
+        size: "50–100 employees",
+        image: "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1000&q=80",
+        description: "Building modern software products and digital solutions for growing businesses.",
+        about: "TechNova Software is a technology company focused on building modern digital products, scalable software solutions, and useful experiences for businesses and their customers.",
+        jobs: [
+            {
+                title: "Frontend Developer",
+                location: "Lahore",
+                type: "Full-time",
+                salary: "PKR 150k – 250k / month",
+                id: "frontend-developer"
+            },
+            {
+                title: "Backend Engineer",
+                location: "Remote",
+                type: "Full-time",
+                salary: "PKR 250k – 400k / month",
+                id: "backend-engineer"
+            }
+        ]
+    },
+
+    brightedge: {
+        name: "BrightEdge Media",
+        logo: "BR",
+        industry: "Marketing",
+        location: "Karachi",
+        size: "20–50 employees",
+        image: "https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=1000&q=80",
+        description: "Helping brands grow through creative campaigns and modern digital marketing.",
+        about: "BrightEdge Media is a creative marketing company helping businesses connect with their audiences through digital campaigns, content, branding, and strategic marketing solutions.",
+        jobs: [
+            {
+                title: "Digital Marketing Executive",
+                location: "Karachi",
+                type: "Full-time",
+                salary: "PKR 80k – 120k / month",
+                id: "digital-marketing"
+            }
+        ]
+    },
+
+    pixelcraft: {
+        name: "PixelCraft Studio",
+        logo: "PI",
+        industry: "Design",
+        location: "Islamabad",
+        size: "10–30 employees",
+        image: "https://images.unsplash.com/photo-1558655146-d09347e92766?auto=format&fit=crop&w=1000&q=80",
+        description: "Creating thoughtful interfaces and memorable digital experiences.",
+        about: "PixelCraft Studio creates user-focused digital experiences through UI/UX design, visual design, product thinking, and creative digital solutions.",
+        jobs: [
+            {
+                title: "UI/UX Designer",
+                location: "Islamabad",
+                type: "Full-time",
+                salary: "PKR 120k – 200k / month",
+                id: "ui-ux-designer"
+            }
+        ]
+    },
+
+    fintrust: {
+        name: "FinTrust Bank",
+        logo: "FI",
+        industry: "Finance",
+        location: "Lahore",
+        size: "100–500 employees",
+        image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1000&q=80",
+        description: "Providing modern financial services and professional banking solutions.",
+        about: "FinTrust Bank provides modern financial services with a focus on reliable banking solutions, financial analysis, customer service, and digital transformation.",
+        jobs: [
+            {
+                title: "Financial Analyst",
+                location: "Lahore",
+                type: "Full-time",
+                salary: "PKR 130k – 190k / month",
+                id: "financial-analyst"
+            }
+        ]
+    },
+
+    eduspark: {
+        name: "EduSpark",
+        logo: "ED",
+        industry: "Education",
+        location: "Remote",
+        size: "20–50 employees",
+        image: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=1000&q=80",
+        description: "Making online learning more accessible, engaging, and effective for students.",
+        about: "EduSpark develops online learning experiences designed to make education more accessible and engaging for students and teachers.",
+        jobs: [
+            {
+                title: "Online Math Tutor",
+                location: "Remote",
+                type: "Part-time",
+                salary: "PKR 40k – 70k / month",
+                id: "online-math-tutor"
+            }
+        ]
+    }
+
+};
+
+
+function setupCompanyDetailsPage() {
+
+    const companyName =
+        document.getElementById("company-name");
+
+    if (!companyName) {
+        return;
+    }
+
+
+    const params =
+        new URLSearchParams(window.location.search);
+
+    const companyId =
+        params.get("company") || "technova";
+
+    const company =
+        companyDetailsData[companyId];
+
+
+    if (!company) {
+        return;
+    }
+
+
+    document.title =
+        `${company.name} | JobNest`;
+
+
+    document.getElementById("company-name").textContent =
+        company.name;
+
+    document.getElementById("company-logo").textContent =
+        company.logo;
+
+    document.getElementById("company-industry").textContent =
+        `${company.industry} · ${company.location}`;
+
+    document.getElementById("company-short-description").textContent =
+        company.description;
+
+    document.getElementById("company-about").textContent =
+        company.about;
+
+    document.getElementById("company-image").src =
+        company.image;
+
+    document.getElementById("company-image").alt =
+        company.name;
+
+    document.getElementById("company-industry-side").textContent =
+        company.industry;
+
+    document.getElementById("company-location").textContent =
+        company.location;
+
+    document.getElementById("company-size").textContent =
+        company.size;
+
+    document.getElementById("company-job-count").textContent =
+        `${company.jobs.length} position${company.jobs.length > 1 ? "s" : ""}`;
+
+
+    const jobsContainer =
+        document.getElementById("company-jobs");
+
+
+    jobsContainer.innerHTML = "";
+
+
+    company.jobs.forEach(function (job) {
+
+        const card =
+            document.createElement("div");
+
+        card.className =
+            "company-job-card";
+
+
+        card.innerHTML = `
+
+            <div class="company-job-info">
+
+                <h3>${job.title}</h3>
+
+                <p>
+                    ${job.type} · ${job.location}
+                </p>
+
+                <p class="company-job-salary">
+                    ${job.salary}
+                </p>
+
+            </div>
+
+            <a
+                href="job-details.html?job=${job.id}"
+                class="company-job-link"
+            >
+                View Job →
+            </a>
+
+        `;
+
+
+        jobsContainer.appendChild(card);
+
+    });
+
+}
+
+
+document.addEventListener(
+    "DOMContentLoaded",
+    setupCompanyDetailsPage
+);
+
+/* =====================================================
+   CAREER RESOURCES SEARCH AND FILTER
+===================================================== */
+
+function setupResourcesPage() {
+    const searchInput = document.getElementById("resource-search");
+    const categorySelect = document.getElementById("resource-category");
+    const cards = document.querySelectorAll(".resource-card");
+    const emptyMessage = document.getElementById("resources-empty");
+
+    if (!searchInput || !categorySelect) {
+        return;
+    }
+
+    function filterResources() {
+        const keyword = searchInput.value.trim().toLowerCase();
+        const category = categorySelect.value.toLowerCase();
+        let visibleCount = 0;
+
+        cards.forEach((card) => {
+            const title = (card.dataset.title || "").toLowerCase();
+            const cardCategory = (card.dataset.category || "").toLowerCase();
+
+            const matchesKeyword = !keyword || title.includes(keyword);
+            const matchesCategory = !category || cardCategory === category;
+            const shouldShow = matchesKeyword && matchesCategory;
+
+            card.style.display = shouldShow ? "" : "none";
+
+            if (shouldShow) {
+                visibleCount++;
+            }
+        });
+
+        if (emptyMessage) {
+            emptyMessage.style.display = visibleCount === 0 ? "block" : "none";
+        }
+    }
+
+    searchInput.addEventListener("input", filterResources);
+    categorySelect.addEventListener("change", filterResources);
+}
+
+document.addEventListener("DOMContentLoaded", setupResourcesPage);
+
+
+/* =====================================================
+   RESOURCE DETAILS DATA AND PAGE
+===================================================== */
+
+const jobNestResourceData = {
+
+    "cv-guide": {
+        category: "CV & RESUME",
+        title: "How to Write a Professional CV",
+        intro: "Learn how to present your experience, skills, and qualifications clearly to potential employers.",
+        image: "https://images.unsplash.com/photo-1586281380349-632531db7ed4?auto=format&fit=crop&w=1200&q=80",
+        sections: [
+            {
+                heading: "Why your CV matters",
+                paragraphs: [
+                    "A CV gives employers an overview of your education, experience, skills, and achievements. A clear and relevant CV helps them understand your background.",
+                    "Adapt your CV to the role you are applying for, and keep the information accurate and easy to scan."
+                ]
+            },
+            {
+                heading: "1. Start with clear contact information",
+                paragraphs: [
+                    "Include your name, professional email address, phone number, and relevant portfolio or professional profile links. Avoid adding unnecessary personal information."
+                ]
+            },
+            {
+                heading: "2. Write a focused professional summary",
+                paragraphs: [
+                    "Use a few concise sentences to describe your background, strongest relevant skills, and the kind of opportunity you are seeking. Keep it specific to the position."
+                ]
+            },
+            {
+                heading: "3. Highlight relevant experience",
+                paragraphs: [
+                    "List experience in reverse chronological order, starting with the most recent. For each role or project, explain your responsibilities and contributions using clear, factual language."
+                ],
+                bullets: [
+                    "Use short, readable bullet points.",
+                    "Describe relevant projects, internships, or volunteer work.",
+                    "Include measurable outcomes only when you can verify them."
+                ]
+            },
+            {
+                heading: "4. Organize your skills and education",
+                paragraphs: [
+                    "Include relevant technical and professional skills, followed by your education and any useful certifications. Prioritize the information most relevant to the job."
+                ]
+            },
+            {
+                heading: "5. Review before submitting",
+                paragraphs: [
+                    "Check spelling, dates, formatting, and contact details. Use consistent headings and a simple layout that is easy to read on different devices."
+                ],
+                bullets: [
+                    "Tailor your CV to the job description.",
+                    "Use a clear file name, such as Firstname-Lastname-CV.pdf.",
+                    "Follow the employer's application instructions."
+                ]
+            }
+        ]
+    },
+
+    "interview-guide": {
+        category: "INTERVIEW SKILLS",
+        title: "Interview Preparation Guide",
+        intro: "Prepare for professional conversations by researching the role, practicing your responses, and planning questions.",
+        image: "https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=1200&q=80",
+        sections: [
+            {
+                heading: "Understand the purpose of preparation",
+                paragraphs: [
+                    "Interview preparation helps you explain your experience and understand whether the role and workplace match your goals. It is also an opportunity to learn more about the employer."
+                ]
+            },
+            {
+                heading: "1. Research the organization and role",
+                paragraphs: [
+                    "Review the employer's official website, the job description, and the responsibilities listed for the position. Identify how your experience and skills relate to the role."
+                ]
+            },
+            {
+                heading: "2. Practice common interview questions",
+                paragraphs: [
+                    "Prepare concise, honest examples about your education, projects, teamwork, problem-solving, and learning experiences. Practice aloud, but avoid memorizing answers word for word."
+                ],
+                bullets: [
+                    "Tell me about yourself.",
+                    "What interests you about this role?",
+                    "Can you describe a project you worked on?",
+                    "What skills would you like to develop?"
+                ]
+            },
+            {
+                heading: "3. Structure your examples",
+                paragraphs: [
+                    "For experience-based questions, you can use the STAR method: Situation, Task, Action, and Result. Explain the context, your responsibility, what you did, and the outcome."
+                ]
+            },
+            {
+                heading: "4. Prepare thoughtful questions",
+                paragraphs: [
+                    "Prepare a few questions about the role, team, expectations, onboarding, and opportunities to learn. This helps you understand the position and its working environment."
+                ]
+            },
+            {
+                heading: "5. Plan the practical details",
+                paragraphs: [
+                    "Confirm the interview time, format, location or meeting link, and any materials requested. For online interviews, check your device and connection in advance."
+                ]
+            }
+        ]
+    },
+
+    "career-path": {
+        category: "CAREER PLANNING",
+        title: "Choosing the Right Career Path",
+        intro: "Explore your interests, strengths, and goals to make informed decisions about your professional direction.",
+        image: "https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=1200&q=80",
+        sections: [
+            {
+                heading: "Start with self-reflection",
+                paragraphs: [
+                    "Career planning is a process of learning about yourself and exploring different kinds of work. Your interests, values, skills, and priorities can help guide that exploration."
+                ]
+            },
+            {
+                heading: "1. Identify your interests",
+                paragraphs: [
+                    "Think about the subjects, activities, and problems that keep you curious. Consider which tasks you enjoy and the types of environments where you feel engaged."
+                ]
+            },
+            {
+                heading: "2. Review your skills",
+                paragraphs: [
+                    "Make a list of skills you have developed through education, projects, internships, volunteering, or personal activities. Also identify skills you would like to strengthen."
+                ]
+            },
+            {
+                heading: "3. Explore different career options",
+                paragraphs: [
+                    "Research job titles, typical responsibilities, required qualifications, and common work settings. Compare several options rather than relying on a single job title."
+                ],
+                bullets: [
+                    "Read job descriptions from different employers.",
+                    "Explore career paths related to your studies.",
+                    "Talk with teachers, mentors, or professionals.",
+                    "Look for opportunities to learn about a field."
+                ]
+            },
+            {
+                heading: "4. Set realistic learning goals",
+                paragraphs: [
+                    "Choose one or two areas to explore further. You might take a course, build a project, attend a career event, or seek an internship to gain practical insight."
+                ]
+            },
+            {
+                heading: "5. Review and adjust your plan",
+                paragraphs: [
+                    "Career decisions can change as you gain experience. Review your goals periodically and use what you learn to refine your next steps."
+                ]
+            }
+        ]
+    },
+
+    "job-search": {
+        category: "CAREER PLANNING",
+        title: "How to Search for Jobs Effectively",
+        intro: "Build an organized job search routine, identify suitable openings, and keep track of your applications.",
+        image: "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?auto=format&fit=crop&w=1200&q=80",
+        sections: [
+            {
+                heading: "Create a focused job search",
+                paragraphs: [
+                    "An organized job search helps you identify relevant opportunities and manage application details. Start by clarifying the types of roles, locations, and work arrangements you are interested in."
+                ]
+            },
+            {
+                heading: "1. Define your search criteria",
+                paragraphs: [
+                    "Choose relevant job titles, industries, locations, and work modes. Keep your criteria flexible enough to discover related roles that may also fit your skills."
+                ]
+            },
+            {
+                heading: "2. Use reliable job listings",
+                paragraphs: [
+                    "Explore employer career pages and reputable job platforms. Read each listing carefully and verify important details on the employer's official channels."
+                ]
+            },
+            {
+                heading: "3. Tailor each application",
+                paragraphs: [
+                    "Review the job requirements and highlight relevant experience, projects, and skills in your CV and application. Follow the employer's requested application process."
+                ]
+            },
+            {
+                heading: "4. Track your applications",
+                paragraphs: [
+                    "Maintain a simple record of the role, company, application date, contact details, and any follow-up steps. This helps you stay organized and avoid duplicate applications."
+                ]
+            },
+            {
+                heading: "5. Keep improving your approach",
+                paragraphs: [
+                    "Review the roles you find and the responses you receive. Use that information to refine your search criteria, strengthen your application materials, and identify skills to develop."
+                ]
+            }
+        ]
+    },
+
+    "career-skills": {
+        category: "CAREER PLANNING",
+        title: "Building Skills for Your Career",
+        intro: "Discover practical ways to develop relevant skills and continue learning as workplace needs evolve.",
+        image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1200&q=80",
+        sections: [
+            {
+                heading: "Build skills with a learning plan",
+                paragraphs: [
+                    "Professional skills develop over time through learning, practice, and feedback. A simple plan can help you focus on abilities relevant to your interests and career goals."
+                ]
+            },
+            {
+                heading: "1. Identify useful skills",
+                paragraphs: [
+                    "Review job descriptions in your field and note recurring technical, communication, collaboration, and problem-solving requirements."
+                ]
+            },
+            {
+                heading: "2. Choose a learning activity",
+                paragraphs: [
+                    "Select a course, tutorial, book, workshop, or practical project that helps you build one specific skill. Choose learning materials appropriate to your current level."
+                ]
+            },
+            {
+                heading: "3. Practice through projects",
+                paragraphs: [
+                    "Apply what you learn in a small project, assignment, or supervised activity. Practical work can help you understand concepts and demonstrate your progress."
+                ]
+            },
+            {
+                heading: "4. Ask for feedback",
+                paragraphs: [
+                    "Share your work with a teacher, mentor, or trusted peer. Specific feedback can help you identify what is working and what to improve."
+                ]
+            },
+            {
+                heading: "5. Record your progress",
+                paragraphs: [
+                    "Keep a record of completed courses, projects, and skills practiced. Update your CV or portfolio when you have relevant work to show."
+                ]
+            }
+        ]
+    },
+
+    "first-job": {
+        category: "CAREER PLANNING",
+        title: "Getting Ready for Your First Job",
+        intro: "Understand workplace expectations and prepare for a positive transition into your first professional role.",
+        image: "https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&w=1200&q=80",
+        sections: [
+            {
+                heading: "Prepare for the transition",
+                paragraphs: [
+                    "Starting a first job is an opportunity to apply your knowledge, learn from others, and become familiar with a professional environment. Asking questions and staying organized can help you adjust."
+                ]
+            },
+            {
+                heading: "1. Understand your role",
+                paragraphs: [
+                    "Review your job responsibilities, expected working hours, reporting arrangements, and initial goals. Ask your manager for clarification when something is unclear."
+                ]
+            },
+            {
+                heading: "2. Practice professional communication",
+                paragraphs: [
+                    "Communicate respectfully and clearly with colleagues. Share progress, ask questions when needed, and let the appropriate person know if you encounter a difficulty."
+                ]
+            },
+            {
+                heading: "3. Organize your work",
+                paragraphs: [
+                    "Keep track of tasks, deadlines, meetings, and instructions. Use the team's preferred tools and clarify priorities when several tasks need attention."
+                ]
+            },
+            {
+                heading: "4. Learn from feedback",
+                paragraphs: [
+                    "Treat feedback as information that can support your development. Ask for examples or clarification when useful, and apply what you learn to future tasks."
+                ]
+            },
+            {
+                heading: "5. Continue developing",
+                paragraphs: [
+                    "Identify areas where you want to grow and look for suitable learning opportunities. Building good work habits and seeking guidance can support your professional progress."
+                ]
+            }
+        ]
+    }
+
+};
+
+
+function setupResourceDetailsPage() {
+    const titleElement = document.getElementById("resource-title");
+
+    if (!titleElement) {
+        return;
+    }
+
+    const params = new URLSearchParams(window.location.search);
+    const resourceId = params.get("resource") || "cv-guide";
+    const resource = jobNestResourceData[resourceId];
+
+    if (!resource) {
+        titleElement.textContent = "Guide not found";
+
+        const intro = document.getElementById("resource-intro");
+        if (intro) {
+            intro.textContent = "This guide could not be found. Please return to Career Resources and select another guide.";
+        }
+
+        const article = document.getElementById("resource-article-content");
+        if (article) {
+            article.innerHTML = '<p>Please visit the <a href="resources.html">Career Resources page</a> to choose an available guide.</p>';
+        }
+
+        const image = document.getElementById("resource-image");
+        if (image) {
+            image.style.display = "none";
+        }
+
+        return;
+    }
+
+    document.title = `${resource.title} | JobNest`;
+
+    document.getElementById("resource-category-label").textContent = resource.category;
+    document.getElementById("resource-title").textContent = resource.title;
+    document.getElementById("resource-intro").textContent = resource.intro;
+
+    const image = document.getElementById("resource-image");
+    image.src = resource.image;
+    image.alt = resource.title;
+
+    const article = document.getElementById("resource-article-content");
+    const toc = document.getElementById("resource-toc");
+
+    article.innerHTML = "";
+    toc.innerHTML = "";
+
+    resource.sections.forEach((section, index) => {
+        const headingId = `guide-section-${index + 1}`;
+
+        const tocItem = document.createElement("li");
+        const tocLink = document.createElement("a");
+        tocLink.href = `#${headingId}`;
+        tocLink.textContent = section.heading;
+        tocLink.style.color = "inherit";
+        tocLink.style.textDecoration = "none";
+        tocItem.appendChild(tocLink);
+        toc.appendChild(tocItem);
+
+        const heading = document.createElement("h2");
+        heading.id = headingId;
+        heading.textContent = section.heading;
+        article.appendChild(heading);
+
+        (section.paragraphs || []).forEach((paragraphText) => {
+            const paragraph = document.createElement("p");
+            paragraph.textContent = paragraphText;
+            article.appendChild(paragraph);
+        });
+
+        if (section.bullets && section.bullets.length) {
+            const list = document.createElement("ul");
+
+            section.bullets.forEach((bulletText) => {
+                const item = document.createElement("li");
+                item.textContent = bulletText;
+                list.appendChild(item);
+            });
+
+            article.appendChild(list);
+        }
+    });
+}
+
+document.addEventListener("DOMContentLoaded", setupResourceDetailsPage);
+
+
+/* =====================================================
+   JOBNEST AUTH FORM VALIDATION
+===================================================== */
+
+function setupJobNestAuthForms() {
+    const loginForm = document.getElementById("login-form");
+    const registerForm = document.getElementById("register-form");
+
+    if (loginForm) {
+        loginForm.addEventListener("submit", function (event) {
+            event.preventDefault();
+
+            const email = document.getElementById("login-email").value.trim();
+            const password = document.getElementById("login-password").value;
+            const message = document.getElementById("login-message");
+
+            if (!email || !password) {
+                message.textContent = "Please enter your email and password.";
+                return;
+            }
+
+            message.textContent =
+                "Form validated. Backend authentication will be connected next.";
+        });
+    }
+
+    if (registerForm) {
+        registerForm.addEventListener("submit", function (event) {
+            event.preventDefault();
+
+            const name = document.getElementById("register-name").value.trim();
+            const email = document.getElementById("register-email").value.trim();
+            const password = document.getElementById("register-password").value;
+            const confirmPassword = document.getElementById("register-confirm").value;
+            const terms = document.getElementById("register-terms").checked;
+            const message = document.getElementById("register-message");
+
+            if (name.length < 2) {
+                message.textContent = "Please enter your full name.";
+                return;
+            }
+
+            if (password.length < 8) {
+                message.textContent = "Password must contain at least 8 characters.";
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                message.textContent = "Passwords do not match.";
+                return;
+            }
+
+            if (!terms) {
+                message.textContent = "Please accept the terms to continue.";
+                return;
+            }
+
+            message.textContent =
+                "Form validated. Backend registration will be connected next.";
+        });
+    }
+}
+
+document.addEventListener("DOMContentLoaded", setupJobNestAuthForms);
+
+
+/* =====================================
+   JOBNEST POST A JOB - DEMO SUBMISSION
+===================================== */
+
+document.addEventListener("DOMContentLoaded", function () {
+  const postJobForm = document.getElementById("post-job-form");
+
+  if (!postJobForm) return;
+
+  const message = document.getElementById("post-job-message");
+
+  postJobForm.addEventListener("submit", function (event) {
+    event.preventDefault();
+
+    if (!postJobForm.reportValidity()) return;
+
+    const formData = new FormData(postJobForm);
+
+    const newJob = {
+      id: "job-" + Date.now(),
+      title: String(formData.get("title") || "").trim(),
+      company: String(formData.get("company") || "").trim(),
+      category: String(formData.get("category") || "").trim(),
+      location: String(formData.get("location") || "").trim(),
+      type: String(formData.get("type") || "").trim(),
+      mode: String(formData.get("mode") || "").trim(),
+      salary: String(formData.get("salary") || "").trim(),
+      description: String(formData.get("description") || "").trim(),
+      responsibilities: String(formData.get("responsibilities") || "").trim(),
+      requirements: String(formData.get("requirements") || "").trim(),
+      email: String(formData.get("email") || "").trim(),
+      postedAt: new Date().toISOString(),
+      status: "Demo - Not published"
+    };
+
+    try {
+      const savedJobs = JSON.parse(
+        localStorage.getItem("jobnestPostedJobs") || "[]"
+      );
+
+      if (!Array.isArray(savedJobs)) {
+        throw new Error("Saved job data is not a list.");
+      }
+
+      savedJobs.unshift(newJob);
+      localStorage.setItem("jobnestPostedJobs", JSON.stringify(savedJobs));
+
+      message.textContent =
+        "Your job listing has been saved in this browser's demo storage. It is not publicly published yet; backend publishing will be connected next.";
+      message.className = "post-job-message success";
+
+      postJobForm.reset();
+      message.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    } catch (error) {
+      message.textContent =
+        "Unable to save this demo listing in your browser. Please try again.";
+      message.className = "post-job-message error";
+    }
+  });
+});
+
+/* =====================================
+   JOBNEST APPLICATIONS PAGE
+===================================== */
+
+document.addEventListener("DOMContentLoaded", function () {
+
+  const applicationsList = document.getElementById("applications-list");
+
+  if (!applicationsList) return;
+
+  const emptyState = document.getElementById("applications-empty");
+
+  const totalCount = document.getElementById("total-applications");
+  const pendingCount = document.getElementById("pending-applications");
+  const reviewCount = document.getElementById("review-applications");
+  const interviewCount = document.getElementById("interview-applications");
+
+  let applications = [];
+
+  try {
+    applications = JSON.parse(
+      localStorage.getItem("jobnestApplications") || "[]"
+    );
+
+    if (!Array.isArray(applications)) {
+      applications = [];
+    }
+  } catch (error) {
+    applications = [];
+  }
+
+  totalCount.textContent = applications.length;
+
+  const pending = applications.filter(function (app) {
+    return !app.status ||
+      String(app.status).toLowerCase() === "pending";
+  }).length;
+
+  const review = applications.filter(function (app) {
+    return String(app.status).toLowerCase().includes("review");
+  }).length;
+
+  const interview = applications.filter(function (app) {
+    return String(app.status).toLowerCase().includes("interview");
+  }).length;
+
+  pendingCount.textContent = pending;
+  reviewCount.textContent = review;
+  interviewCount.textContent = interview;
+
+
+  if (applications.length === 0) {
+
+    applicationsList.innerHTML = "";
+    emptyState.classList.add("show");
+
+    return;
+  }
+
+  emptyState.classList.remove("show");
+
+
+  applicationsList.innerHTML = applications.map(function (app) {
+
+    const title = app.title || app.jobTitle || "Job Application";
+    const company = app.company || "Company";
+    const location = app.location || "Location not specified";
+    const type = app.type || "Full-time";
+
+    const rawStatus = app.status || "Pending";
+
+    let statusClass = "";
+
+    if (String(rawStatus).toLowerCase().includes("review")) {
+      statusClass = "review";
+    }
+
+    if (String(rawStatus).toLowerCase().includes("interview")) {
+      statusClass = "interview";
+    }
+
+    if (String(rawStatus).toLowerCase().includes("reject")) {
+      statusClass = "rejected";
+    }
+
+    const jobId =
+      app.id ||
+      app.jobId ||
+      title.toLowerCase().replace(/\s+/g, "-");
+
+    return `
+      <article class="application-card">
+
+        <div class="application-main">
+
+          <h3 class="application-title">
+            ${title}
+          </h3>
+
+          <p class="application-company">
+            ${company}
+          </p>
+
+          <div class="application-meta">
+            <span>${location}</span>
+            <span>${type}</span>
+          </div>
+
+        </div>
+
+        <div class="application-side">
+
+          <span class="application-status ${statusClass}">
+            ${rawStatus}
+          </span>
+
+          <a
+            href="job-details.html?job=${encodeURIComponent(jobId)}"
+            class="application-view-btn"
+          >
+            View Job →
+          </a>
+
+        </div>
+
+      </article>
+    `;
+
+  }).join("");
+
+});

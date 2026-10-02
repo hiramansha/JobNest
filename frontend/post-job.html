@@ -1,0 +1,192 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Post a Job | JobNest</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="post-job-page">
+
+  <header class="site-header">
+    <nav class="nav-container">
+      <a href="index.html" class="logo">JobNest<span>.</span></a>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="jobs.html">Find Jobs</a>
+        <a href="companies.html">Companies</a>
+        <a href="resources.html">Career Resources</a>
+      </div>
+      <div class="nav-actions">
+        <a href="post-job.html" class="nav-login active">Post a Job</a>
+        <a href="login.html" class="nav-login">Sign In</a>
+        <a href="register.html" class="nav-register">Register</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="post-job-hero">
+      <div class="post-job-hero-content">
+        <span class="post-job-eyebrow">FOR EMPLOYERS</span>
+        <h1>Find the right talent for <span>your team.</span></h1>
+        <p>Share your opportunity with job seekers and connect with people who are ready to grow with your company.</p>
+      </div>
+    </section>
+
+    <section class="post-job-section">
+      <div class="post-job-layout">
+
+        <div class="post-job-form-card">
+          <div class="post-job-form-heading">
+            <span class="post-job-step">EMPLOYER WORKSPACE</span>
+            <h2>Post a new job</h2>
+            <p>Complete the details below to create your job listing.</p>
+          </div>
+
+          <form id="post-job-form">
+            <div class="post-job-fields">
+              <div class="post-job-field full">
+                <label for="pj-title">Job title *</label>
+                <input id="pj-title" name="title" type="text" placeholder="e.g. Frontend Developer" required>
+              </div>
+
+              <div class="post-job-field">
+                <label for="pj-company">Company name *</label>
+                <input id="pj-company" name="company" type="text" placeholder="Your company" required>
+              </div>
+
+              <div class="post-job-field">
+                <label for="pj-category">Job category *</label>
+                <select id="pj-category" name="category" required>
+                  <option value="">Select category</option>
+                  <option>IT & Software</option>
+                  <option>Marketing</option>
+                  <option>Design</option>
+                  <option>Finance</option>
+                  <option>Education</option>
+                  <option>Healthcare</option>
+                  <option>Customer Support</option>
+                  <option>Other</option>
+                </select>
+              </div>
+
+              <div class="post-job-field">
+                <label for="pj-location">Location *</label>
+                <input id="pj-location" name="location" type="text" placeholder="e.g. Lahore, Pakistan" required>
+              </div>
+
+              <div class="post-job-field">
+                <label for="pj-type">Employment type *</label>
+                <select id="pj-type" name="type" required>
+                  <option value="">Select employment type</option>
+                  <option>Full-time</option>
+                  <option>Part-time</option>
+                  <option>Contract</option>
+                  <option>Internship</option>
+                  <option>Freelance</option>
+                </select>
+              </div>
+
+              <div class="post-job-field">
+                <label for="pj-mode">Work mode *</label>
+                <select id="pj-mode" name="mode" required>
+                  <option value="">Select work mode</option>
+                  <option>On-site</option>
+                  <option>Remote</option>
+                  <option>Hybrid</option>
+                </select>
+              </div>
+
+              <div class="post-job-field">
+                <label for="pj-salary">Salary range</label>
+                <input id="pj-salary" name="salary" type="text" placeholder="e.g. PKR 100,000 - 150,000/month">
+              </div>
+
+              <div class="post-job-field full">
+                <label for="pj-description">Job description *</label>
+                <textarea id="pj-description" name="description" rows="5" placeholder="Describe the role, your team, and what the candidate will do..." required></textarea>
+              </div>
+
+              <div class="post-job-field full">
+                <label for="pj-responsibilities">Responsibilities</label>
+                <textarea id="pj-responsibilities" name="responsibilities" rows="4" placeholder="List the main responsibilities of this role..."></textarea>
+              </div>
+
+              <div class="post-job-field full">
+                <label for="pj-requirements">Requirements</label>
+                <textarea id="pj-requirements" name="requirements" rows="4" placeholder="Mention skills, qualifications, and experience required..."></textarea>
+              </div>
+
+              <div class="post-job-field full">
+                <label for="pj-email">Contact email *</label>
+                <input id="pj-email" name="email" type="email" placeholder="careers@company.com" required>
+              </div>
+            </div>
+
+            <div class="post-job-form-note">
+              <span>ⓘ</span>
+              This demo stores submitted listings in this browser only. Server-side publishing will be added when the backend is connected.
+            </div>
+
+            <button type="submit" class="post-job-submit">Submit Job Listing <span>→</span></button>
+            <p id="post-job-message" class="post-job-message" role="status" aria-live="polite"></p>
+          </form>
+        </div>
+
+        <aside class="post-job-sidebar">
+          <div class="post-job-side-card">
+            <div class="post-job-side-icon">✦</div>
+            <h3>Reach the right candidates</h3>
+            <p>Create a clear job listing with the details candidates need to understand your opportunity.</p>
+            <div class="post-job-side-divider"></div>
+            <h4>Tips for a helpful listing</h4>
+            <ul>
+              <li>Choose a clear, specific job title.</li>
+              <li>Describe the role and responsibilities.</li>
+              <li>Include relevant skills and requirements.</li>
+              <li>Provide a valid contact email.</li>
+            </ul>
+          </div>
+          <div class="post-job-help-card">
+            <h3>Need to find a job?</h3>
+            <p>Explore opportunities from companies and discover your next career step.</p>
+            <a href="jobs.html">Explore jobs →</a>
+          </div>
+        </aside>
+
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <a href="index.html" class="logo">JobNest<span>.</span></a>
+        <p>Helping you find opportunities and take the next step in your career.</p>
+      </div>
+      <div class="footer-column">
+        <h4>Explore</h4>
+        <a href="jobs.html">Find Jobs</a>
+        <a href="companies.html">Companies</a>
+        <a href="resources.html">Career Resources</a>
+      </div>
+      <div class="footer-column">
+        <h4>For Employers</h4>
+        <a href="post-job.html">Post a Job</a>
+        <a href="register.html">Create Account</a>
+        <a href="login.html">Sign In</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 JobNest. All Rights Reserved.</p>
+    </div>
+  </footer>
+
+  <script src="js/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Job Details | JobNest</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap"
+        rel="stylesheet"
+    >
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<!-- =====================================================
+     NAVBAR
+===================================================== -->
+
+<header class="navbar">
+
+    <div class="nav-container">
+
+        <a href="index.html" class="logo">
+            JobNest<span>.</span>
+        </a>
+
+        <nav class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="jobs.html">Find Jobs</a>
+            <a href="companies.html">Companies</a>
+            <a href="resources.html">Career Resources</a>
+            <a href="post-job.html">Post a Job</a>
+        </nav>
+
+        <div class="nav-actions">
+            <a href="login.html" class="nav-login">Sign In</a>
+            <a href="register.html" class="nav-register">Register</a>
+        </div>
+
+    </div>
+
+</header>
+
+
+<!-- =====================================================
+     JOB DETAILS HEADER
+===================================================== -->
+
+<section class="job-details-header">
+
+    <div class="job-details-header-container">
+
+        <a href="jobs.html" class="back-to-jobs">
+            ← Back to Jobs
+        </a>
+
+        <div class="job-details-heading">
+
+            <div class="job-details-company-logo" id="detail-company-logo">
+                TE
+            </div>
+
+            <div class="job-details-title">
+
+                <span class="job-details-label">
+                    JOB OPPORTUNITY
+                </span>
+
+                <h1 id="detail-job-title">
+                    Frontend Developer
+                </h1>
+
+                <p id="detail-company">
+                    TechNova
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     JOB DETAILS MAIN
+===================================================== -->
+
+<main class="job-details-main">
+
+    <div class="job-details-container">
+
+
+        <!-- =================================================
+             LEFT CONTENT
+        ================================================= -->
+
+        <section class="job-details-content">
+
+
+            <!-- JOB IMAGE -->
+
+            <div class="job-details-image">
+
+                <img
+                    id="detail-job-image"
+                    src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1200&q=80"
+                    alt="Job opportunity"
+                >
+
+            </div>
+
+
+            <!-- JOB OVERVIEW -->
+
+            <div class="job-content-section">
+
+                <h2>About the Role</h2>
+
+                <p id="detail-description">
+                    We are looking for a talented and motivated Frontend Developer
+                    to join our growing team. You will work on modern web
+                    applications and create clean, responsive, and user-friendly
+                    digital experiences.
+                </p>
+
+                <p>
+                    This role is a great opportunity for someone who enjoys
+                    solving problems, working with modern technologies, and
+                    collaborating with a creative team.
+                </p>
+
+            </div>
+
+
+            <!-- RESPONSIBILITIES -->
+
+            <div class="job-content-section">
+
+                <h2>Responsibilities</h2>
+
+                <ul class="job-detail-list">
+
+                    <li>
+                        Build responsive and user-friendly web interfaces.
+                    </li>
+
+                    <li>
+                        Work closely with designers and backend developers.
+                    </li>
+
+                    <li>
+                        Write clean, maintainable, and reusable code.
+                    </li>
+
+                    <li>
+                        Test and improve website performance and usability.
+                    </li>
+
+                    <li>
+                        Participate in team discussions and development
+                        activities.
+                    </li>
+
+                </ul>
+
+            </div>
+
+
+            <!-- REQUIREMENTS -->
+
+            <div class="job-content-section">
+
+                <h2>Requirements</h2>
+
+                <ul class="job-detail-list">
+
+                    <li>
+                        Good understanding of HTML, CSS, and JavaScript.
+                    </li>
+
+                    <li>
+                        Familiarity with responsive web design.
+                    </li>
+
+                    <li>
+                        Basic understanding of Git and GitHub.
+                    </li>
+
+                    <li>
+                        Strong problem-solving and communication skills.
+                    </li>
+
+                    <li>
+                        Ability to work independently and as part of a team.
+                    </li>
+
+                </ul>
+
+            </div>
+
+
+            <!-- BENEFITS -->
+
+            <div class="job-content-section">
+
+                <h2>What We Offer</h2>
+
+                <div class="job-benefits">
+
+                    <div class="benefit-item">
+                        Competitive salary
+                    </div>
+
+                    <div class="benefit-item">
+                        Flexible working environment
+                    </div>
+
+                    <div class="benefit-item">
+                        Learning opportunities
+                    </div>
+
+                    <div class="benefit-item">
+                        Friendly team culture
+                    </div>
+
+                    <div class="benefit-item">
+                        Career growth opportunities
+                    </div>
+
+                    <div class="benefit-item">
+                        Professional development
+                    </div>
+
+                </div>
+
+            </div>
+
+
+        </section>
+
+
+        <!-- =================================================
+             RIGHT SIDEBAR
+        ================================================= -->
+
+        <aside class="job-details-sidebar">
+
+
+            <!-- APPLY CARD -->
+
+            <div class="job-apply-card">
+
+                <h3>Interested in this job?</h3>
+
+                <p>
+                    Take the next step and send your application to
+                    the hiring team.
+                </p>
+
+                <a
+                    href="applications.html"
+                    class="job-apply-btn"
+                    id="apply-job-btn"
+                >
+                    Apply Now
+                </a>
+
+                <button
+                    type="button"
+                    class="job-save-details-btn"
+                    id="detail-save-job"
+                >
+                    Save Job
+                </button>
+
+            </div>
+
+
+            <!-- JOB INFORMATION -->
+
+            <div class="job-info-card">
+
+                <h3>Job Information</h3>
+
+                <div class="job-info-item">
+
+                    <span>Job Type</span>
+
+                    <strong id="detail-job-type">
+                        Full-time
+                    </strong>
+
+                </div>
+
+
+                <div class="job-info-item">
+
+                    <span>Location</span>
+
+                    <strong id="detail-location">
+                        Lahore
+                    </strong>
+
+                </div>
+
+
+                <div class="job-info-item">
+
+                    <span>Work Mode</span>
+
+                    <strong id="detail-work-mode">
+                        On-site
+                    </strong>
+
+                </div>
+
+
+                <div class="job-info-item">
+
+                    <span>Category</span>
+
+                    <strong id="detail-category">
+                        IT
+                    </strong>
+
+                </div>
+
+
+                <div class="job-info-item">
+
+                    <span>Salary</span>
+
+                    <strong id="detail-salary">
+                        PKR 150k – 250k / month
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <!-- COMPANY CARD -->
+
+            <div class="job-company-card">
+
+                <h3>About the Company</h3>
+
+                <div class="company-mini-logo" id="sidebar-company-logo">
+                    TE
+                </div>
+
+                <h4 id="sidebar-company-name">
+                    TechNova
+                </h4>
+
+                <p id="sidebar-company-description">
+                    A growing technology company creating modern
+                    digital products and software solutions.
+                </p>
+
+                <a
+                    href="company-details.html?company=technova"
+                    class="company-profile-link"
+                >
+                    View Company →
+                </a>
+
+            </div>
+
+
+        </aside>
+
+    </div>
+
+</main>
+
+
+<!-- =====================================================
+     FOOTER
+===================================================== -->
+
+<footer class="site-footer">
+
+    <div class="footer-container">
+
+        <div class="footer-brand">
+
+            <a href="index.html" class="footer-logo">
+                JobNest<span>.</span>
+            </a>
+
+            <p>
+                Made with care to help you find work you love.
+            </p>
+
+        </div>
+
+
+        <div class="footer-column">
+
+            <h4>Job Seekers</h4>
+
+            <a href="jobs.html">Find Jobs</a>
+            <a href="saved-jobs.html">Saved Jobs</a>
+            <a href="applications.html">My Applications</a>
+            <a href="profile.html">My Profile</a>
+
+        </div>
+
+
+        <div class="footer-column">
+
+            <h4>Employers</h4>
+
+            <a href="post-job.html">Post a Job</a>
+            <a href="companies.html">Companies</a>
+
+        </div>
+
+
+        <div class="footer-column">
+
+            <h4>JobNest</h4>
+
+            <a href="resources.html">Career Resources</a>
+            <a href="index.html">About Us</a>
+            <a href="index.html">Contact</a>
+
+        </div>
+
+    </div>
+
+
+    <div class="footer-bottom">
+
+        <p>
+            © 2026 JobNest. All Rights Reserved.
+        </p>
+
+    </div>
+
+</footer>
+
+
+<script src="js/script.js"></script>
+
+</body>
+</html>
