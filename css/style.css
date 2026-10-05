@@ -5,11 +5,11 @@
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap');
 
 :root {
-    ---primary: #2563EB;
---primary-dark: #1D4ED8;
---accent: #60A5FA;
---soft-pink: #EFF6FF;
---soft-rose: #DBEAFE;
+    --primary: #0a87f4;
+--primary-dark: #1565C0;
+--accent: #42A5F5;
+--soft-pink: #E3F2FD;
+--soft-rose: #BBDEFB;
     --cream: #F8FAFC;
     --white: #FFFFFF;
     --dark: #29232B;
