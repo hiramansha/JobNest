@@ -6196,3 +6196,231 @@ footer {
     align-items: flex-start;
   }
 }
+
+/* JOBNEST APPLICATION TRACKER */
+
+.application-tracker-section {
+    padding: 60px 7%;
+    background: var(--cream, #FFF9F7);
+}
+
+.application-tracker-section .section-heading {
+    text-align: center;
+    margin-bottom: 35px;
+}
+
+.application-tracker-section .eyebrow {
+    color: var(--primary, #8F3D67);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 12px;
+}
+
+.application-tracker-section .section-heading h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 34px;
+    color: var(--dark, #29232B);
+    margin: 10px 0;
+}
+
+.application-tracker-section .section-heading p {
+    color: var(--muted, #817781);
+}
+
+.tracker-card {
+    max-width: 850px;
+    margin: 20px auto;
+    padding: 25px;
+    background: #fff;
+    border: 1px solid var(--line, #E8DDE2);
+    border-radius: 16px;
+    box-shadow: 0 8px 25px rgba(80, 40, 60, 0.06);
+}
+
+.tracker-card h3 {
+    color: var(--dark, #29232B);
+    margin-bottom: 8px;
+}
+
+.tracker-card p {
+    color: var(--muted, #817781);
+}
+
+.tracker-progress {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-top: 25px;
+}
+
+.tracker-step {
+    flex: 1;
+    text-align: center;
+    font-size: 12px;
+    color: var(--muted, #817781);
+}
+
+.tracker-step span {
+    display: block;
+    width: 27px;
+    height: 27px;
+    line-height: 27px;
+    margin: 0 auto 8px;
+    border-radius: 50%;
+    background: #eee;
+    color: #777;
+    font-weight: 700;
+}
+
+.tracker-step.completed span {
+    background: var(--primary, #8F3D67);
+    color: white;
+}
+
+.tracker-step.completed {
+    color: var(--primary-dark, #6F294D);
+    font-weight: 700;
+}
+
+.tracker-status {
+    display: inline-block;
+    margin-top: 15px;
+    padding: 7px 13px;
+    border-radius: 20px;
+    background: var(--soft-pink, #F8E8EF);
+    color: var(--primary-dark, #6F294D);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+@media (max-width: 600px) {
+    .application-tracker-section {
+        padding: 40px 5%;
+    }
+
+    .tracker-card {
+        padding: 18px 12px;
+    }
+
+    .tracker-progress {
+        gap: 3px;
+    }
+
+    .tracker-step {
+        font-size: 9px;
+    }
+
+    .tracker-step span {
+        width: 23px;
+        height: 23px;
+        line-height: 23px;
+    }
+}
+
+/* APPLICATION STATUS UPDATE */
+
+.tracker-update {
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line, #E8DDE2);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.tracker-update label {
+    color: var(--dark, #29232B);
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.tracker-update select {
+    min-width: 190px;
+    padding: 11px 15px;
+    border: 1px solid var(--line, #E8DDE2);
+    border-radius: 10px;
+    background: #fff;
+    color: var(--dark, #29232B);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    outline: none;
+    transition: 0.25s ease;
+}
+
+.tracker-update select:hover {
+    border-color: var(--accent, #C9789D);
+}
+
+.tracker-update select:focus {
+    border-color: var(--primary, #8F3D67);
+    box-shadow: 0 0 0 3px rgba(143, 61, 103, 0.08);
+}
+
+@media (max-width: 600px) {
+    .tracker-update {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .tracker-update select {
+        width: 100%;
+    }
+}
+
+/* =========================================
+   PROFILE COMPLETION
+========================================= */
+
+.profile-completion {
+    margin: 20px 0 25px;
+    padding: 18px;
+    background: var(--soft-pink);
+    border-radius: 14px;
+}
+
+.profile-completion-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    margin-bottom: 10px;
+}
+
+.profile-completion-top span {
+    color: var(--dark);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.profile-completion-top strong {
+    color: var(--primary);
+    font-size: 14px;
+}
+
+.profile-completion-bar {
+    width: 100%;
+    height: 8px;
+    background: var(--white);
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+#profile-completion-fill {
+    width: 0%;
+    height: 100%;
+    background: var(--primary);
+    border-radius: 20px;
+    transition: width 0.4s ease;
+}
+
+.profile-completion p {
+    margin: 10px 0 0;
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.5;
+}

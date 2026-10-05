@@ -1481,14 +1481,22 @@ function loadSavedJobsPage() {
                     const index =
                         Number(button.dataset.index);
 
-                    savedJobs.splice(index, 1);
+                   const confirmRemove = confirm(
+    "Are you sure you want to remove this saved job?"
+);
 
-                    localStorage.setItem(
-                        "jobnestSavedJobs",
-                        JSON.stringify(savedJobs)
-                    );
+if (!confirmRemove) {
+    return;
+}
 
-                    loadSavedJobsPage();
+savedJobs.splice(index, 1);
+
+localStorage.setItem(
+    "jobnestSavedJobs",
+    JSON.stringify(savedJobs)
+);
+
+loadSavedJobsPage();
 
                 }
             );
@@ -1663,7 +1671,47 @@ function updateProfileStats() {
     if (applicationCount) {
         applicationCount.textContent = applications.length;
     }
+    const profileFields = [
+        "profile-name",
+        "profile-email",
+        "profile-phone",
+        "profile-location",
+        "profile-title",
+        "profile-experience",
+        "profile-skills",
+        "profile-bio"
+    ];
 
+    let completedFields = 0;
+
+    profileFields.forEach(function (fieldId) {
+
+        const field = document.getElementById(fieldId);
+
+        if (field && field.value.trim() !== "") {
+            completedFields++;
+        }
+
+    });
+
+    const completion =
+        Math.round(
+            (completedFields / profileFields.length) * 100
+        );
+
+    const completionPercent =
+        document.getElementById("profile-completion-percent");
+
+    const completionFill =
+        document.getElementById("profile-completion-fill");
+
+    if (completionPercent) {
+        completionPercent.textContent = completion + "%";
+    }
+
+    if (completionFill) {
+        completionFill.style.width = completion + "%";
+    }
 }
 
 
@@ -2701,3 +2749,220 @@ document.addEventListener("DOMContentLoaded", function () {
   }).join("");
 
 });
+
+/* =========================================
+   JOBNEST APPLICATION TRACKING SYSTEM
+========================================= */
+
+function setupApplicationTracker() {
+    const tracker = document.getElementById("application-tracker");
+
+    if (!tracker) return;
+
+    const applications =
+        JSON.parse(localStorage.getItem("jobnestApplications")) || [];
+
+    if (applications.length === 0) {
+        tracker.innerHTML = `
+            <div class="tracker-card">
+                <h3>No applications yet</h3>
+                <p>
+                    Apply for a job to start tracking your application journey.
+                </p>
+            </div>
+        `;
+        return;
+    }
+
+   const stages = [
+    "Applied",
+    "Under Review",
+    "Shortlisted",
+    "Interview",
+    "Selected",
+    "Rejected"
+];
+
+    tracker.innerHTML = applications.map((application, index) => {
+
+        const currentStage = application.status || "Applied";
+
+        let currentIndex = stages.indexOf(currentStage);
+
+        if (currentIndex === -1) {
+            currentIndex = 0;
+        }
+
+    const progressStages = [
+    "Applied",
+    "Under Review",
+    "Shortlisted",
+    "Interview",
+    "Selected",
+    "Rejected"
+];
+
+        const steps = progressStages.map((stage, stageIndex) => `
+            <div class="tracker-step ${
+                stageIndex <= progressStages.indexOf(currentStage)
+                    ? "completed"
+                    : ""
+            }">
+                <span>${stageIndex + 1}</span>
+                ${stage}
+            </div>
+        `).join("");
+
+        return `
+            <div class="tracker-card">
+
+                <h3>
+                    ${application.title || "Job Application"}
+                </h3>
+
+                <p>
+                    ${application.company || "Company"}
+                    ${application.location ? " • " + application.location : ""}
+                </p>
+
+                <span class="tracker-status ${
+                    currentStage === "Rejected"
+                        ? "tracker-rejected"
+                        : ""
+                }">
+                    Current Status: ${currentStage}
+                </span>
+
+                <div class="tracker-progress">
+                    ${steps}
+                </div>
+
+                <div class="tracker-update">
+
+                    <label for="status-${index}">
+                        Update Application Status
+                    </label>
+
+                    <select
+                        id="status-${index}"
+                        onchange="updateApplicationStatus(${index}, this.value)"
+                    >
+
+                        ${stages.map(stage => `
+                            <option
+                                value="${stage}"
+                                ${stage === currentStage ? "selected" : ""}
+                            >
+                                ${stage}
+                            </option>
+                        `).join("")}
+
+                    </select>
+
+                </div>
+
+            </div>
+        `;
+
+    }).join("");
+}
+
+
+/* =========================================
+   UPDATE APPLICATION STATUS
+========================================= */
+
+function updateApplicationStatus(index, newStatus) {
+
+    const applications =
+        JSON.parse(localStorage.getItem("jobnestApplications")) || [];
+
+    if (!applications[index]) return;
+
+    applications[index].status = newStatus;
+
+    localStorage.setItem(
+        "jobnestApplications",
+        JSON.stringify(applications)
+    );
+
+    setupApplicationTracker();
+
+    updateApplicationStats();
+
+    if (typeof setupApplicationsPage === "function") {
+        setupApplicationsPage();
+    }
+}
+
+
+/* =========================================
+   APPLICATION STATISTICS
+========================================= */
+
+function updateApplicationStats() {
+
+    const applications =
+        JSON.parse(localStorage.getItem("jobnestApplications")) || [];
+
+    const total = applications.length;
+
+    const pending = applications.filter(application =>
+        !application.status ||
+        application.status === "Applied"
+    ).length;
+
+    const review = applications.filter(application =>
+        application.status === "Under Review"
+    ).length;
+
+    const interviews = applications.filter(application =>
+        application.status === "Interview"
+    ).length;
+
+
+    const totalElement =
+        document.getElementById("total-applications");
+
+    const pendingElement =
+        document.getElementById("pending-applications");
+
+    const reviewElement =
+        document.getElementById("review-applications");
+
+    const interviewElement =
+        document.getElementById("interview-applications");
+
+
+    if (totalElement) {
+        totalElement.textContent = total;
+    }
+
+    if (pendingElement) {
+        pendingElement.textContent = pending;
+    }
+
+    if (reviewElement) {
+        reviewElement.textContent = review;
+    }
+
+    if (interviewElement) {
+        interviewElement.textContent = interviews;
+    }
+}
+
+
+/* =========================================
+   APPLICATION TRACKING INITIALIZATION
+========================================= */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        setupApplicationTracker();
+
+        updateApplicationStats();
+
+    }
+);

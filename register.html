@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account | JobNest</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="auth-page">
+
+<header class="navbar">
+    <div class="nav-container">
+
+        <a href="index.html" class="logo">
+            JobNest<span>.</span>
+        </a>
+
+        <nav class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="jobs.html">Find Jobs</a>
+            <a href="companies.html">Companies</a>
+            <a href="resources.html">Career Resources</a>
+            <a href="post-job.html">Post a Job</a>
+            <a href="profile.html">My Profile</a>
+        </nav>
+
+        <div class="nav-actions">
+            <a href="login.html" class="nav-login">Sign In</a>
+            <a href="register.html" class="nav-register active">Register</a>
+        </div>
+
+    </div>
+</header>
+
+
+<main class="auth-main">
+
+    <section class="auth-card">
+
+        <div class="auth-heading">
+            <span class="auth-eyebrow">JOIN JOBNEST</span>
+
+            <h1>Create your account</h1>
+
+            <p>
+                Start your journey and discover opportunities made for you.
+            </p>
+        </div>
+
+
+        <form id="register-form" class="auth-form">
+
+            <label for="register-name">Full name</label>
+
+            <input
+                type="text"
+                id="register-name"
+                name="name"
+                placeholder="Enter your full name"
+                autocomplete="name"
+                required
+            >
+
+
+            <label for="register-email">Email address</label>
+
+            <input
+                type="email"
+                id="register-email"
+                name="email"
+                placeholder="you@example.com"
+                autocomplete="email"
+                required
+            >
+
+
+            <label for="register-password">Password</label>
+
+            <input
+                type="password"
+                id="register-password"
+                name="password"
+                placeholder="Create a password"
+                autocomplete="new-password"
+                minlength="6"
+                required
+            >
+
+
+            <label for="register-confirm-password">
+                Confirm password
+            </label>
+
+            <input
+                type="password"
+                id="register-confirm-password"
+                name="confirm-password"
+                placeholder="Confirm your password"
+                autocomplete="new-password"
+                minlength="6"
+                required
+            >
+
+
+            <label class="auth-remember">
+                <input
+                    type="checkbox"
+                    id="register-terms"
+                    required
+                >
+
+                <span>
+                    I agree to the JobNest terms and conditions.
+                </span>
+            </label>
+
+
+            <button type="submit" class="auth-submit">
+                Create Account
+            </button>
+
+            <p
+                id="register-message"
+                class="auth-message"
+                aria-live="polite"
+            ></p>
+
+        </form>
+
+
+        <p class="auth-switch">
+            Already have an account?
+            <a href="login.html">Sign in</a>
+        </p>
+
+
+        <a href="index.html" class="auth-home-link">
+            ← Back to Home
+        </a>
+
+    </section>
+
+
+    <aside class="auth-side">
+
+        <div class="auth-side-content">
+
+            <span class="auth-side-label">
+                START YOUR JOURNEY
+            </span>
+
+            <h2>
+                Your next opportunity is waiting.
+            </h2>
+
+            <p>
+                Create your JobNest account, explore opportunities,
+                save jobs, and build your career journey in one place.
+            </p>
+
+            <img
+                src="https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=1000&q=80"
+                alt="Professionals working together in an office"
+            >
+
+        </div>
+
+    </aside>
+
+</main>
+
+
+<footer class="auth-footer">
+    <p>© 2026 JobNest. All Rights Reserved.</p>
+</footer>
+
+
+<script src="js/script.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const registerForm = document.getElementById("register-form");
+
+    if (!registerForm) return;
+
+    registerForm.addEventListener("submit", function (event) {
+
+        event.preventDefault();
+
+        const name =
+            document.getElementById("register-name").value.trim();
+
+        const email =
+            document.getElementById("register-email").value.trim();
+
+        const password =
+            document.getElementById("register-password").value;
+
+        const confirmPassword =
+            document.getElementById("register-confirm-password").value;
+
+        const message =
+            document.getElementById("register-message");
+
+
+        if (password !== confirmPassword) {
+
+            message.textContent = "Passwords do not match.";
+            message.className = "auth-message error";
+
+            return;
+        }
+
+
+        const user = {
+            name: name,
+            email: email
+        };
+
+        localStorage.setItem(
+            "jobnestUser",
+            JSON.stringify(user)
+        );
+
+
+        message.textContent =
+            "Account created successfully! Redirecting to Sign In...";
+
+        message.className = "auth-message success";
+
+
+        setTimeout(function () {
+            window.location.href = "login.html";
+        }, 1500);
+
+    });
+
+});
+</script>
+
+</body>
+</html>
