@@ -5,17 +5,17 @@
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap');
 
 :root {
-    --primary: #8F3D67;
-    --primary-dark: #6F294D;
-    --accent: #C9789D;
-    --soft-pink: #F8E8EF;
-    --soft-rose: #F4DDE7;
-    --cream: #FFF9F7;
+    ---primary: #2563EB;
+--primary-dark: #1D4ED8;
+--accent: #60A5FA;
+--soft-pink: #EFF6FF;
+--soft-rose: #DBEAFE;
+    --cream: #F8FAFC;
     --white: #FFFFFF;
     --dark: #29232B;
     --text: #514850;
     --muted: #817781;
-    --line: #E8DDE2;
+    --line: #DCE6F2;
     --gold: #B49762;
 
     --shadow-sm: 0 5px 20px rgba(41, 35, 43, 0.06);
@@ -253,8 +253,8 @@ button {
 .hero {
     padding: 65px 4% 55px;
     background:
-        radial-gradient(circle at 10% 20%, rgba(201, 120, 157, 0.12), transparent 30%),
-        radial-gradient(circle at 90% 80%, rgba(143, 61, 103, 0.08), transparent 28%),
+        radial-gradient(circle at 10% 20%, rgba(96, 165, 250, 0.12), transparent 30%),
+        radial-gradient(circle at 90% 80%, rgba(37, 99, 235, 0.08), transparent 28%),
         var(--cream);
 }
 
@@ -2323,7 +2323,7 @@ footer {
 .search-field select:focus {
     border-color: var(--accent);
     background: var(--white);
-    box-shadow: 0 0 0 4px rgba(201, 120, 157, 0.10);
+    box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.10);
 }
 
 .search-field input::placeholder {
@@ -5325,7 +5325,7 @@ footer {
 .auth-form > input:focus,
 .auth-form > select:focus {
     border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(143, 61, 103, 0.09);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.09);
 }
 
 .auth-form-options {
@@ -5500,12 +5500,12 @@ footer {
 ===================================== */
 
 .post-job-page {
-  background: #FFF9F7;
+  background: #F8FAFC;
   color: #514850;
 }
 
 .post-job-hero {
-  background: linear-gradient(120deg, #F8E8EF, #FFF9F7 75%);
+  background: linear-gradient(120deg, #EFF6FF, #F8FAFC 75%);
   padding: 64px 24px 72px;
   text-align: center;
 }
@@ -5518,7 +5518,7 @@ footer {
 .post-job-eyebrow,
 .post-job-step {
   display: inline-block;
-  color: #8F3D67;
+  color: #2563EB;
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 1.8px;
@@ -5534,7 +5534,7 @@ footer {
 }
 
 .post-job-hero h1 span {
-  color: #8F3D67;
+  color: #2563EB;
 }
 
 .post-job-hero p {
@@ -5562,9 +5562,9 @@ footer {
 .post-job-side-card,
 .post-job-help-card {
   background: #FFFFFF;
-  border: 1px solid #E8DDE2;
+  border: 1px solid #DCE6F2;
   border-radius: 20px;
-  box-shadow: 0 12px 35px rgba(80, 42, 61, 0.055);
+  box-shadow: 0 12px 35px rgba(30, 64, 100, 0.055);
 }
 
 .post-job-form-card {
@@ -5574,7 +5574,7 @@ footer {
 .post-job-form-heading {
   padding-bottom: 24px;
   margin-bottom: 26px;
-  border-bottom: 1px solid #F0E7EB;
+  border-bottom: 1px solid #E5EDF7;
 }
 
 .post-job-form-heading h2 {
@@ -5620,7 +5620,7 @@ footer {
   width: 100%;
   min-height: 48px;
   padding: 12px 14px;
-  border: 1px solid #E8DDE2;
+  border: 1px solid #DCE6F2;
   border-radius: 10px;
   background: #FFFCFD;
   color: #29232B;
@@ -5638,9 +5638,9 @@ footer {
 .post-job-field input:focus,
 .post-job-field select:focus,
 .post-job-field textarea:focus {
-  border-color: #C9789D;
+  border-color: #60A5FA;
   background: #FFFFFF;
-  box-shadow: 0 0 0 3px rgba(201, 120, 157, .13);
+  box-shadow: 0 0 0 3px rgba(96, 165, 250, .13);
 }
 
 .post-job-field input::placeholder,
@@ -5655,14 +5655,14 @@ footer {
   margin: 26px 0 20px;
   padding: 14px 16px;
   border-radius: 11px;
-  background: #FFF5F8;
+  background: #F0F7FF;
   color: #756D73;
   font-size: 12px;
   line-height: 1.7;
 }
 
 .post-job-form-note span {
-  color: #8F3D67;
+  color: #2563EB;
   font-size: 16px;
   font-weight: 700;
 }
@@ -5673,7 +5673,7 @@ footer {
   padding: 13px 20px;
   border: 0;
   border-radius: 11px;
-  background: #8F3D67;
+  background: #2563EB;
   color: #FFFFFF;
   font: 700 14px "DM Sans", sans-serif;
   cursor: pointer;
@@ -5681,7 +5681,7 @@ footer {
 }
 
 .post-job-submit:hover {
-  background: #6F294D;
+  background: #1D4ED8;
   transform: translateY(-1px);
 }
 
@@ -5727,8 +5727,8 @@ footer {
   display: grid;
   place-items: center;
   border-radius: 13px;
-  background: #F8E8EF;
-  color: #8F3D67;
+  background: #EFF6FF;
+  color: #2563EB;
   font-size: 23px;
   margin-bottom: 18px;
 }
@@ -5752,7 +5752,7 @@ footer {
 
 .post-job-side-divider {
   height: 1px;
-  background: #F0E7EB;
+  background: #E5EDF7;
   margin: 22px 0;
 }
 
@@ -5777,21 +5777,21 @@ footer {
 
 .post-job-help-card {
   padding: 24px;
-  background: #F8E8EF;
-  border-color: #F4DDE7;
+  background: #EFF6FF;
+  border-color: #DBEAFE;
 }
 
 .post-job-help-card a {
   display: inline-block;
   margin-top: 17px;
-  color: #8F3D67;
+  color: #2563EB;
   font-size: 13px;
   font-weight: 700;
   text-decoration: none;
 }
 
 .post-job-help-card a:hover {
-  color: #6F294D;
+  color: #1D4ED8;
   text-decoration: underline;
 }
 
@@ -5847,14 +5847,14 @@ footer {
 ===================================== */
 
 .applications-page {
-  background: #FFF9F7;
+  background: #F8FAFC;
   color: #514850;
 }
 
 .applications-hero {
   padding: 62px 22px 68px;
   text-align: center;
-  background: linear-gradient(120deg, #F8E8EF, #FFF9F7 75%);
+  background: linear-gradient(120deg, #EFF6FF, #F8FAFC 75%);
 }
 
 .applications-hero-content {
@@ -5865,7 +5865,7 @@ footer {
 .applications-eyebrow,
 .applications-section-label {
   display: inline-block;
-  color: #8F3D67;
+  color: #2563EB;
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 1.8px;
@@ -5881,7 +5881,7 @@ footer {
 }
 
 .applications-hero h1 span {
-  color: #8F3D67;
+  color: #2563EB;
 }
 
 .applications-hero p {
@@ -5914,15 +5914,15 @@ footer {
 .application-stat-card {
   padding: 23px 20px;
   background: #FFFFFF;
-  border: 1px solid #E8DDE2;
+  border: 1px solid #DCE6F2;
   border-radius: 17px;
   text-align: center;
-  box-shadow: 0 10px 30px rgba(80, 42, 61, 0.04);
+  box-shadow: 0 10px 30px rgba(30, 64, 100, 0.04);
 }
 
 .application-stat-number {
   display: block;
-  color: #8F3D67;
+  color: #2563EB;
   font-size: 27px;
   font-weight: 700;
   margin-bottom: 5px;
@@ -5962,9 +5962,9 @@ footer {
 .applications-browse-btn {
   flex-shrink: 0;
   padding: 12px 18px;
-  border: 1px solid #E2CBD5;
+  border: 1px solid #CBDCF2;
   border-radius: 10px;
-  color: #8F3D67;
+  color: #2563EB;
   background: #FFFFFF;
   font-size: 13px;
   font-weight: 700;
@@ -5973,7 +5973,7 @@ footer {
 }
 
 .applications-browse-btn:hover {
-  background: #F8E8EF;
+  background: #EFF6FF;
 }
 
 
@@ -5992,9 +5992,9 @@ footer {
   gap: 20px;
   padding: 23px;
   background: #FFFFFF;
-  border: 1px solid #E8DDE2;
+  border: 1px solid #DCE6F2;
   border-radius: 16px;
-  box-shadow: 0 8px 25px rgba(80, 42, 61, 0.035);
+  box-shadow: 0 8px 25px rgba(30, 64, 100, 0.035);
 }
 
 .application-main {
@@ -6010,7 +6010,7 @@ footer {
 
 .application-company {
   margin: 0 0 11px;
-  color: #8F3D67;
+  color: #2563EB;
   font-size: 13px;
   font-weight: 600;
 }
@@ -6024,7 +6024,7 @@ footer {
 .application-meta span {
   padding: 5px 9px;
   border-radius: 7px;
-  background: #F8F1F4;
+  background: #F1F5F9;
   color: #756D73;
   font-size: 11px;
 }
@@ -6062,7 +6062,7 @@ footer {
 }
 
 .application-view-btn {
-  color: #8F3D67;
+  color: #2563EB;
   font-size: 12px;
   font-weight: 700;
   text-decoration: none;
@@ -6082,7 +6082,7 @@ footer {
   padding: 55px 25px;
   text-align: center;
   background: #FFFFFF;
-  border: 1px dashed #DECBD4;
+  border: 1px dashed #D3E1F2;
   border-radius: 18px;
 }
 
@@ -6097,8 +6097,8 @@ footer {
   place-items: center;
   margin: 0 auto 17px;
   border-radius: 50%;
-  background: #F8E8EF;
-  color: #8F3D67;
+  background: #EFF6FF;
+  color: #2563EB;
   font-size: 21px;
   font-weight: 700;
 }
@@ -6122,7 +6122,7 @@ footer {
   display: inline-block;
   padding: 11px 18px;
   border-radius: 9px;
-  background: #8F3D67;
+  background: #2563EB;
   color: #FFFFFF;
   font-size: 13px;
   font-weight: 700;
@@ -6130,7 +6130,7 @@ footer {
 }
 
 .applications-empty-btn:hover {
-  background: #6F294D;
+  background: #1D4ED8;
 }
 
 
@@ -6201,7 +6201,7 @@ footer {
 
 .application-tracker-section {
     padding: 60px 7%;
-    background: var(--cream, #FFF9F7);
+    background: var(--cream, #F8FAFC);
 }
 
 .application-tracker-section .section-heading {
@@ -6210,7 +6210,7 @@ footer {
 }
 
 .application-tracker-section .eyebrow {
-    color: var(--primary, #8F3D67);
+    color: var(--primary, #2563EB);
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 2px;
@@ -6233,9 +6233,9 @@ footer {
     margin: 20px auto;
     padding: 25px;
     background: #fff;
-    border: 1px solid var(--line, #E8DDE2);
+    border: 1px solid var(--line, #DCE6F2);
     border-radius: 16px;
-    box-shadow: 0 8px 25px rgba(80, 40, 60, 0.06);
+    box-shadow: 0 8px 25px rgba(30, 64, 100, 0.06);
 }
 
 .tracker-card h3 {
@@ -6275,12 +6275,12 @@ footer {
 }
 
 .tracker-step.completed span {
-    background: var(--primary, #8F3D67);
+    background: var(--primary, #2563EB);
     color: white;
 }
 
 .tracker-step.completed {
-    color: var(--primary-dark, #6F294D);
+    color: var(--primary-dark, #1D4ED8);
     font-weight: 700;
 }
 
@@ -6289,8 +6289,8 @@ footer {
     margin-top: 15px;
     padding: 7px 13px;
     border-radius: 20px;
-    background: var(--soft-pink, #F8E8EF);
-    color: var(--primary-dark, #6F294D);
+    background: var(--soft-pink, #EFF6FF);
+    color: var(--primary-dark, #1D4ED8);
     font-size: 12px;
     font-weight: 700;
 }
@@ -6324,7 +6324,7 @@ footer {
 .tracker-update {
     margin-top: 25px;
     padding-top: 20px;
-    border-top: 1px solid var(--line, #E8DDE2);
+    border-top: 1px solid var(--line, #DCE6F2);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -6340,7 +6340,7 @@ footer {
 .tracker-update select {
     min-width: 190px;
     padding: 11px 15px;
-    border: 1px solid var(--line, #E8DDE2);
+    border: 1px solid var(--line, #DCE6F2);
     border-radius: 10px;
     background: #fff;
     color: var(--dark, #29232B);
@@ -6353,12 +6353,12 @@ footer {
 }
 
 .tracker-update select:hover {
-    border-color: var(--accent, #C9789D);
+    border-color: var(--accent, #60A5FA);
 }
 
 .tracker-update select:focus {
-    border-color: var(--primary, #8F3D67);
-    box-shadow: 0 0 0 3px rgba(143, 61, 103, 0.08);
+    border-color: var(--primary, #2563EB);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
 }
 
 @media (max-width: 600px) {
