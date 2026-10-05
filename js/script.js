@@ -424,14 +424,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
         modeFilters.forEach((checkbox) => {
 
-            checkbox.addEventListener(
-                "change",
-                filterJobs
-            );
+    checkbox.addEventListener(
+        "change",
+        filterJobs
+    );
 
-        });
+});
 
 
+/* =========================================
+   APPLY INITIAL FILTERS
+========================================= */
+
+filterJobs();
         /* =========================================
            SORT JOBS
         ========================================= */
