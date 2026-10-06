@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Employer Dashboard | JobNest</title>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <!-- =========================
+         NAVBAR
+    ========================== -->
+
+    <header class="navbar">
+
+        <div class="nav-container">
+
+            <a href="index.html" class="logo">
+                Job<span>Nest</span>
+            </a>
+
+            <nav class="nav-links">
+
+                <a href="index.html">Home</a>
+                <a href="jobs.html">Find Jobs</a>
+                <a href="companies.html">Companies</a>
+                <a href="resources.html">Career Resources</a>
+                <a href="post-job.html">Post a Job</a>
+                <a href="profile.html">My Profile</a>
+
+            </nav>
+
+            <div class="nav-actions">
+
+                <a href="login.html" class="btn btn-outline">
+                    Sign In
+                </a>
+
+                <a href="register.html" class="btn btn-primary">
+                    Register
+                </a>
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+    <!-- =========================
+         DASHBOARD HEADER
+    ========================== -->
+
+    <main>
+
+        <section class="dashboard-hero">
+
+            <div class="container">
+
+                <span class="eyebrow">
+                    EMPLOYER DASHBOARD
+                </span>
+
+                <h1>
+                    Manage Your Hiring
+                </h1>
+
+                <p>
+                    Post jobs, manage applications, and find the right talent for your company.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             STATISTICS
+        ========================== -->
+
+        <section class="dashboard-section">
+
+            <div class="container">
+
+                <div class="dashboard-stats">
+
+                    <div class="dashboard-stat-card">
+
+                        <div class="stat-icon">
+                            💼
+                        </div>
+
+                        <div>
+                            <span>Total Jobs</span>
+                            <strong id="employer-total-jobs">0</strong>
+                        </div>
+
+                    </div>
+
+
+                    <div class="dashboard-stat-card">
+
+                        <div class="stat-icon">
+                            🟢
+                        </div>
+
+                        <div>
+                            <span>Active Jobs</span>
+                            <strong id="employer-active-jobs">0</strong>
+                        </div>
+
+                    </div>
+
+
+                    <div class="dashboard-stat-card">
+
+                        <div class="stat-icon">
+                            📩
+                        </div>
+
+                        <div>
+                            <span>Applications</span>
+                            <strong id="employer-total-applications">0</strong>
+                        </div>
+
+                    </div>
+
+
+                    <div class="dashboard-stat-card">
+
+                        <div class="stat-icon">
+                            ⭐
+                        </div>
+
+                        <div>
+                            <span>Shortlisted</span>
+                            <strong id="employer-shortlisted">0</strong>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             QUICK ACTIONS
+        ========================== -->
+
+        <section class="dashboard-section">
+
+            <div class="container">
+
+                <div class="section-heading">
+
+                    <span class="eyebrow">
+                        QUICK ACTIONS
+                    </span>
+
+                    <h2>
+                        Manage Your Hiring
+                    </h2>
+
+                    <p>
+                        Everything you need to manage your recruitment process.
+                    </p>
+
+                </div>
+
+
+                <div class="dashboard-actions">
+
+                    <a href="post-job.html" class="dashboard-action-card">
+
+                        <div class="action-icon">
+                            ➕
+                        </div>
+
+                        <h3>
+                            Post a New Job
+                        </h3>
+
+                        <p>
+                            Create a new job opportunity and reach qualified candidates.
+                        </p>
+
+                        <span>
+                            Post Job →
+                        </span>
+
+                    </a>
+
+
+                    <a href="#my-jobs" class="dashboard-action-card">
+
+                        <div class="action-icon">
+                            📋
+                        </div>
+
+                        <h3>
+                            Manage Jobs
+                        </h3>
+
+                        <p>
+                            View, edit, close, and manage your posted job listings.
+                        </p>
+
+                        <span>
+                            Manage Jobs →
+                        </span>
+
+                    </a>
+
+
+                    <a href="#applications" class="dashboard-action-card">
+
+                        <div class="action-icon">
+                            👥
+                        </div>
+
+                        <h3>
+                            View Applicants
+                        </h3>
+
+                        <p>
+                            Review candidates and manage incoming applications.
+                        </p>
+
+                        <span>
+                            View Applicants →
+                        </span>
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             MY JOBS
+        ========================== -->
+
+        <section class="dashboard-section" id="my-jobs">
+
+            <div class="container">
+
+                <div class="section-heading">
+
+                    <span class="eyebrow">
+                        JOB MANAGEMENT
+                    </span>
+
+                    <h2>
+                        My Posted Jobs
+                    </h2>
+
+                    <p>
+                        Manage your current job listings.
+                    </p>
+
+                </div>
+
+
+                <div id="employer-jobs-list">
+
+                    <div class="dashboard-empty-state">
+
+                        <div class="empty-icon">
+                            💼
+                        </div>
+
+                        <h3>
+                            No jobs posted yet
+                        </h3>
+
+                        <p>
+                            Start hiring by posting your first job opportunity.
+                        </p>
+
+                        <a href="post-job.html" class="btn btn-primary">
+                            Post Your First Job
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             APPLICATIONS
+        ========================== -->
+
+        <section class="dashboard-section" id="applications">
+
+            <div class="container">
+
+                <div class="section-heading">
+
+                    <span class="eyebrow">
+                        CANDIDATE MANAGEMENT
+                    </span>
+
+                    <h2>
+                        Recent Applications
+                    </h2>
+
+                    <p>
+                        Review candidates who have applied to your jobs.
+                    </p>
+
+                </div>
+
+
+                <div id="employer-applications-list">
+
+                    <div class="dashboard-empty-state">
+
+                        <div class="empty-icon">
+                            📩
+                        </div>
+
+                        <h3>
+                            No applications yet
+                        </h3>
+
+                        <p>
+                            Applications from candidates will appear here.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- =========================
+         FOOTER
+    ========================== -->
+
+    <footer class="footer">
+
+        <div class="container">
+
+            <div class="footer-content">
+
+                <div>
+
+                    <a href="index.html" class="logo">
+                        Job<span>Nest</span>
+                    </a>
+
+                    <p>
+                        Connecting talented people with meaningful opportunities.
+                    </p>
+
+                </div>
+
+
+                <div class="footer-links">
+
+                    <a href="jobs.html">Find Jobs</a>
+                    <a href="companies.html">Companies</a>
+                    <a href="post-job.html">Post a Job</a>
+                    <a href="profile.html">My Profile</a>
+
+                </div>
+
+            </div>
+
+
+            <div class="footer-bottom">
+
+                <p>
+                    © 2026 JobNest. All Rights Reserved.
+                </p>
+
+            </div>
+
+        </div>
+
+    </footer>
+
+
+    <script src="js/script.js"></script>
+
+</body>
+</html>

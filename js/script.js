@@ -2971,3 +2971,238 @@ document.addEventListener(
 
     }
 );
+
+/* =========================================
+   JOBNEST EMPLOYER DASHBOARD
+========================================= */
+
+function setupEmployerDashboard() {
+
+    const jobsList = document.getElementById("employer-jobs-list");
+
+    if (!jobsList) return;
+
+    const postedJobs =
+        JSON.parse(localStorage.getItem("jobnestPostedJobs")) || [];
+
+    const applications =
+        JSON.parse(localStorage.getItem("jobnestApplications")) || [];
+
+
+    /* =========================
+       STATISTICS
+    ========================== */
+
+    const totalJobs = postedJobs.length;
+
+    const activeJobs = postedJobs.filter(job =>
+        job.status !== "Closed"
+    ).length;
+
+    const totalApplications = applications.length;
+
+    const shortlisted = applications.filter(application =>
+        application.status === "Shortlisted"
+    ).length;
+
+
+    const totalJobsElement =
+        document.getElementById("employer-total-jobs");
+
+    const activeJobsElement =
+        document.getElementById("employer-active-jobs");
+
+    const applicationsElement =
+        document.getElementById("employer-total-applications");
+
+    const shortlistedElement =
+        document.getElementById("employer-shortlisted");
+
+
+    if (totalJobsElement)
+        totalJobsElement.textContent = totalJobs;
+
+    if (activeJobsElement)
+        activeJobsElement.textContent = activeJobs;
+
+    if (applicationsElement)
+        applicationsElement.textContent = totalApplications;
+
+    if (shortlistedElement)
+        shortlistedElement.textContent = shortlisted;
+
+
+    /* =========================
+       POSTED JOBS
+    ========================== */
+
+    if (postedJobs.length === 0) {
+
+        jobsList.innerHTML = `
+            <div class="dashboard-empty-state">
+
+                <div class="empty-icon">
+                    💼
+                </div>
+
+                <h3>
+                    No jobs posted yet
+                </h3>
+
+                <p>
+                    Start hiring by posting your first job opportunity.
+                </p>
+
+                <a href="post-job.html" class="btn btn-primary">
+                    Post Your First Job
+                </a>
+
+            </div>
+        `;
+
+    } else {
+
+        jobsList.innerHTML = postedJobs.map((job, index) => `
+
+            <div class="dashboard-job-card">
+
+                <div>
+
+                    <span class="job-status">
+                        ${job.status || "Active"}
+                    </span>
+
+                    <h3>
+                        ${job.title || "Job Position"}
+                    </h3>
+
+                    <p>
+                        ${job.company || "Company"}
+                        ${job.location ? " • " + job.location : ""}
+                    </p>
+
+                </div>
+
+                <div class="dashboard-job-actions">
+
+                    <a
+                        href="job-details.html"
+                        class="btn btn-outline"
+                    >
+                        View
+                    </a>
+
+                    <button
+                        class="btn btn-danger"
+                        onclick="closeEmployerJob(${index})"
+                    >
+                        Close Job
+                    </button>
+
+                </div>
+
+            </div>
+
+        `).join("");
+
+    }
+
+
+    /* =========================
+       APPLICATIONS
+    ========================== */
+
+    const applicationsList =
+        document.getElementById("employer-applications-list");
+
+    if (!applicationsList) return;
+
+
+    if (applications.length === 0) {
+
+        applicationsList.innerHTML = `
+            <div class="dashboard-empty-state">
+
+                <div class="empty-icon">
+                    📩
+                </div>
+
+                <h3>
+                    No applications yet
+                </h3>
+
+                <p>
+                    Applications from candidates will appear here.
+                </p>
+
+            </div>
+        `;
+
+    } else {
+
+        applicationsList.innerHTML = applications
+            .slice(0, 5)
+            .map(application => `
+
+                <div class="dashboard-application-card">
+
+                    <div>
+
+                        <h3>
+                            ${application.name || "Candidate"}
+                        </h3>
+
+                        <p>
+                            Applied for:
+                            ${application.title || "Job Position"}
+                        </p>
+
+                    </div>
+
+                    <span class="tracker-status">
+                        ${application.status || "Applied"}
+                    </span>
+
+                </div>
+
+            `)
+            .join("");
+
+    }
+}
+
+
+/* =========================
+   CLOSE JOB
+========================= */
+
+function closeEmployerJob(index) {
+
+    const postedJobs =
+        JSON.parse(localStorage.getItem("jobnestPostedJobs")) || [];
+
+    if (!postedJobs[index]) return;
+
+    postedJobs[index].status = "Closed";
+
+    localStorage.setItem(
+        "jobnestPostedJobs",
+        JSON.stringify(postedJobs)
+    );
+
+    setupEmployerDashboard();
+}
+
+
+/* =========================
+   INITIALIZE DASHBOARD
+========================= */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        setupEmployerDashboard();
+
+    }
+);
