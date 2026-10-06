@@ -2606,7 +2606,28 @@ document.addEventListener("DOMContentLoaded", function () {
         throw new Error("Saved job data is not a list.");
       }
 
-      savedJobs.unshift(newJob);
+      const editData =
+    JSON.parse(localStorage.getItem("jobnestEditJob") || "null");
+
+if (
+    editData &&
+    editData.job &&
+    Number.isInteger(editData.index) &&
+    savedJobs[editData.index]
+) {
+
+    newJob.id = editData.job.id || newJob.id;
+    newJob.postedAt = editData.job.postedAt || newJob.postedAt;
+
+    savedJobs[editData.index] = newJob;
+
+    localStorage.removeItem("jobnestEditJob");
+
+} else {
+
+    savedJobs.unshift(newJob);
+
+}
       localStorage.setItem("jobnestPostedJobs", JSON.stringify(savedJobs));
 
       message.textContent =
@@ -3033,108 +3054,119 @@ function setupEmployerDashboard() {
 
 
     /* =========================
-       POSTED JOBS
-    ========================== */
+   POSTED JOBS
+========================= */
 
-    if (postedJobs.length === 0) {
+if (postedJobs.length === 0) {
 
-        jobsList.innerHTML = `
-            <div class="dashboard-empty-state">
+    jobsList.innerHTML = `
+        <div class="dashboard-empty-state">
 
-                <div class="empty-icon">
-                    💼
-                </div>
-
-                <h3>
-                    No jobs posted yet
-                </h3>
-
-                <p>
-                    Start hiring by posting your first job opportunity.
-                </p>
-
-                <a href="post-job.html" class="btn btn-primary">
-                    Post Your First Job
-                </a>
-
-            </div>
-        `;
-
-    } else {
-
-        jobsList.innerHTML = postedJobs.map((job, index) => `
-
-            <div class="dashboard-job-card">
-
-                <div>
-
-                    <span class="job-status">
-                        ${job.status || "Active"}
-                    </span>
-
-                    <h3>
-                        ${job.title || "Job Position"}
-                    </h3>
-
-                    <p>
-                        ${job.company || "Company"}
-                        ${job.location ? " • " + job.location : ""}
-                    </p>
-
-                </div>
-
-                <div class="dashboard-job-actions">
-
-                    <a
-                        href="job-details.html"
-                        class="btn btn-outline"
-                    >
-                        View
-                    </a>
-
-                    <button
-                        class="btn btn-danger"
-                        onclick="closeEmployerJob(${index})"
-                    >
-                        Close Job
-                    </button>
-
-                </div>
-
+            <div class="empty-icon">
+                💼
             </div>
 
-        `).join("");
+            <h3>
+                No jobs posted yet
+            </h3>
 
-    }
+            <p>
+                Start hiring by posting your first job opportunity.
+            </p>
 
+            <a href="post-job.html" class="btn btn-primary">
+                Post Your First Job
+            </a>
 
-    /* =========================
-       APPLICATIONS
-    ========================== */
+        </div>
+    `;
 
-    const applicationsList =
-        document.getElementById("employer-applications-list");
+} else {
 
-    if (!applicationsList) return;
+    jobsList.innerHTML = postedJobs
+        .map(function (job, index) {
 
+            return `
+                <div class="dashboard-job-card">
+
+                    <div>
+
+                        <span class="job-status">
+                            ${job.status || "Active"}
+                        </span>
+
+                        <h3>
+                            ${job.title || "Job Position"}
+                        </h3>
+
+                        <p>
+                            ${job.company || "Company"}
+                            ${job.location ? " • " + job.location : ""}
+                        </p>
+
+                    </div>
+
+                    <div class="dashboard-job-actions">
+
+                        <a 
+    href="job-details.html?id=${job.id}" 
+    class="btn btn-outline" 
+>
+    View 
+</a>
+
+                        <button
+                            class="btn btn-primary"
+                            onclick="editEmployerJob(${index})"
+                        >
+                            Edit Job
+                        </button>
+
+                        <button
+                            class="btn btn-danger"
+                            onclick="closeEmployerJob(${index})"
+                        >
+                            Close Job
+                        </button>
+
+                        <button
+                            class="btn btn-danger"
+                            onclick="deleteEmployerJob(${index})"
+                        >
+                            Delete Job
+                        </button>
+
+                    </div>
+
+                </div>
+            `;
+
+        })
+        .join("");
+
+}
+}
+
+/* =========================
+   APPLICATIONS
+========================= */
+
+const applicationsList =
+    document.getElementById("employer-applications-list");
+
+if (applicationsList) {
 
     if (applications.length === 0) {
 
         applicationsList.innerHTML = `
             <div class="dashboard-empty-state">
+                <div class="empty-icon">📩</div>
 
-                <div class="empty-icon">
-                    📩
-                </div>
-
-                <h3>
-                    No applications yet
-                </h3>
+                <h3>No applications yet</h3>
 
                 <p>
                     Applications from candidates will appear here.
                 </p>
-
             </div>
         `;
 
@@ -3142,32 +3174,85 @@ function setupEmployerDashboard() {
 
         applicationsList.innerHTML = applications
             .slice(0, 5)
-            .map(application => `
+            .map(function (application) {
 
-                <div class="dashboard-application-card">
+                return `
+                    <div class="dashboard-application-card">
 
-                    <div>
+                        <div>
+                            <h3>
+                                ${application.name || "Candidate"}
+                            </h3>
 
-                        <h3>
-                            ${application.name || "Candidate"}
-                        </h3>
+                            <p>
+                                Applied for:
+                                ${application.title || "Job Position"}
+                            </p>
+                        </div>
+<div>
+    <span class="tracker-status">
+        ${application.status || "Applied"}
+    </span>
 
-                        <p>
-                            Applied for:
-                            ${application.title || "Job Position"}
-                        </p>
+    <select
+        class="application-status-select"
+        onchange="updateEmployerApplicationStatus(this, '${application.id || ""}')"
+    >
+        <option value="Applied" ${
+            (application.status || "Applied") === "Applied"
+                ? "selected"
+                : ""
+        }>
+            Applied
+        </option>
+
+        <option value="Under Review" ${
+            application.status === "Under Review"
+                ? "selected"
+                : ""
+        }>
+            Under Review
+        </option>
+
+        <option value="Shortlisted" ${
+            application.status === "Shortlisted"
+                ? "selected"
+                : ""
+        }>
+            Shortlisted
+        </option>
+
+        <option value="Interview" ${
+            application.status === "Interview"
+                ? "selected"
+                : ""
+        }>
+            Interview
+        </option>
+
+        <option value="Selected" ${
+            application.status === "Selected"
+                ? "selected"
+                : ""
+        }>
+            Selected
+        </option>
+
+        <option value="Rejected" ${
+            application.status === "Rejected"
+                ? "selected"
+                : ""
+        }>
+            Rejected
+        </option>
+    </select>
+</div>
 
                     </div>
+                `;
 
-                    <span class="tracker-status">
-                        ${application.status || "Applied"}
-                    </span>
-
-                </div>
-
-            `)
+            })
             .join("");
-
     }
 }
 
@@ -3183,6 +3268,12 @@ function closeEmployerJob(index) {
 
     if (!postedJobs[index]) return;
 
+    const confirmClose = confirm(
+        "Are you sure you want to close this job?"
+    );
+
+    if (!confirmClose) return;
+
     postedJobs[index].status = "Closed";
 
     localStorage.setItem(
@@ -3195,14 +3286,286 @@ function closeEmployerJob(index) {
 
 
 /* =========================
+   EDIT EMPLOYER JOB
+========================= */
+
+function editEmployerJob(index) {
+
+    const postedJobs =
+        JSON.parse(localStorage.getItem("jobnestPostedJobs")) || [];
+
+    if (!postedJobs[index]) return;
+
+    localStorage.setItem(
+        "jobnestEditJob",
+        JSON.stringify({
+            index: index,
+            job: postedJobs[index]
+        })
+    );
+
+    window.location.href = "post-job.html";
+}
+
+
+/* =====================================
+   JOBNEST EDIT JOB - LOAD EXISTING DATA
+===================================== */
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const postJobForm =
+        document.getElementById("post-job-form");
+
+    if (!postJobForm) return;
+
+    const editData =
+        JSON.parse(
+            localStorage.getItem("jobnestEditJob") || "null"
+        );
+
+    if (!editData || !editData.job) return;
+
+    const job = editData.job;
+
+    const fields = [
+        "title",
+        "company",
+        "category",
+        "location",
+        "type",
+        "mode",
+        "salary",
+        "description",
+        "responsibilities",
+        "requirements",
+        "email"
+    ];
+
+    fields.forEach(function (field) {
+
+        const input =
+            postJobForm.querySelector(`[name="${field}"]`);
+
+        if (input) {
+            input.value = job[field] || "";
+        }
+
+    });
+
+});
+
+
+/* =========================
+   DELETE JOB
+========================= */
+
+function deleteEmployerJob(index) {
+
+    const postedJobs =
+        JSON.parse(localStorage.getItem("jobnestPostedJobs")) || [];
+
+    if (!postedJobs[index]) return;
+
+    const confirmDelete = confirm(
+        "Are you sure you want to permanently delete this job?"
+    );
+
+    if (!confirmDelete) return;
+
+    postedJobs.splice(index, 1);
+
+    localStorage.setItem(
+        "jobnestPostedJobs",
+        JSON.stringify(postedJobs)
+    );
+
+    setupEmployerDashboard();
+}
+
+/* =========================
+   UPDATE EMPLOYER APPLICATION STATUS
+========================= */
+
+function updateEmployerApplicationStatus(selectElement, applicationId) {
+
+    const applications =
+        JSON.parse(localStorage.getItem("jobnestApplications")) || [];
+
+    const applicationIndex = applications.findIndex(
+        application => String(application.id || "") === String(applicationId)
+    );
+
+    if (applicationIndex === -1) return;
+
+    applications[applicationIndex].status = selectElement.value;
+
+    localStorage.setItem(
+        "jobnestApplications",
+        JSON.stringify(applications)
+    );
+
+    setupEmployerDashboard();
+}
+/* =========================
    INITIALIZE DASHBOARD
 ========================= */
 
-document.addEventListener(
-    "DOMContentLoaded",
-    function () {
+document.addEventListener("DOMContentLoaded", function () {
 
-        setupEmployerDashboard();
+    setupEmployerDashboard();
 
+});
+
+/* =====================================
+   JOBNEST DYNAMIC JOB DETAILS
+===================================== */
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const jobTitle = document.getElementById("detail-job-title");
+
+    if (!jobTitle) return;
+
+    const params = new URLSearchParams(window.location.search);
+    const jobId = params.get("id");
+
+    if (!jobId) return;
+
+    const postedJobs =
+        JSON.parse(localStorage.getItem("jobnestPostedJobs")) || [];
+
+    const job = postedJobs.find(
+        function (item) {
+            return String(item.id) === String(jobId);
+        }
+    );
+
+    if (!job) {
+        jobTitle.textContent = "Job Not Found";
+        return;
     }
-);
+
+    /* JOB HEADER */
+
+    document.getElementById("detail-job-title").textContent =
+        job.title || "Job Position";
+
+    document.getElementById("detail-company").textContent =
+        job.company || "Company";
+
+    /* JOB INFORMATION */
+
+    document.getElementById("detail-job-type").textContent =
+        job.type || "Not specified";
+
+    document.getElementById("detail-location").textContent =
+        job.location || "Not specified";
+
+    document.getElementById("detail-work-mode").textContent =
+        job.mode || "Not specified";
+
+    document.getElementById("detail-category").textContent =
+        job.category || "Not specified";
+
+    document.getElementById("detail-salary").textContent =
+        job.salary || "Not specified";
+
+    /* DESCRIPTION */
+
+    const description =
+        document.getElementById("detail-description");
+
+    if (description) {
+        description.textContent =
+            job.description || "No description provided.";
+    }
+
+    /* RESPONSIBILITIES */
+
+    const responsibilitySection =
+        document.querySelectorAll(".job-content-section")[1];
+
+    if (responsibilitySection && job.responsibilities) {
+
+        const list =
+            responsibilitySection.querySelector(".job-detail-list");
+
+        if (list) {
+
+            list.innerHTML = job.responsibilities
+                .split(/\r?\n/)
+                .filter(item => item.trim())
+                .map(item => `<li>${item.trim()}</li>`)
+                .join("");
+
+        }
+    }
+
+    /* REQUIREMENTS */
+
+    const requirementSection =
+        document.querySelectorAll(".job-content-section")[2];
+
+    if (requirementSection && job.requirements) {
+
+        const list =
+            requirementSection.querySelector(".job-detail-list");
+
+        if (list) {
+
+            list.innerHTML = job.requirements
+                .split(/\r?\n/)
+                .filter(item => item.trim())
+                .map(item => `<li>${item.trim()}</li>`)
+                .join("");
+
+        }
+    }
+
+    /* COMPANY */
+
+    const sidebarCompanyName =
+        document.getElementById("sidebar-company-name");
+
+    if (sidebarCompanyName) {
+        sidebarCompanyName.textContent =
+            job.company || "Company";
+    }
+
+    const sidebarCompanyDescription =
+        document.getElementById("sidebar-company-description");
+
+    if (sidebarCompanyDescription) {
+        sidebarCompanyDescription.textContent =
+            "Company information will be available soon.";
+    }
+
+    /* COMPANY LOGO */
+
+    const companyName =
+        job.company || "Company";
+
+    const initials =
+        companyName
+            .split(" ")
+            .map(word => word.charAt(0))
+            .join("")
+            .substring(0, 2)
+            .toUpperCase();
+
+    const companyLogo =
+        document.getElementById("detail-company-logo");
+
+    const sidebarLogo =
+        document.getElementById("sidebar-company-logo");
+
+    if (companyLogo) {
+        companyLogo.textContent = initials;
+    }
+
+    if (sidebarLogo) {
+        sidebarLogo.textContent = initials;
+    }
+
+});
