@@ -303,7 +303,8 @@
 <script type="module">
 
 import {
-    signInWithEmailAndPassword
+    signInWithEmailAndPassword,
+    sendPasswordResetEmail
 } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
 
 import {
@@ -312,6 +313,12 @@ import {
 
 
 const loginForm = document.getElementById("login-form");
+const forgotPassword = document.getElementById("forgot-password");
+
+
+/* =========================
+   FIREBASE LOGIN
+========================= */
 
 if (loginForm) {
 
@@ -328,7 +335,8 @@ if (loginForm) {
             .getElementById("login-password")
             .value;
 
-        const message = document.getElementById("login-message");
+        const message =
+            document.getElementById("login-message");
 
 
         try {
@@ -348,7 +356,8 @@ if (loginForm) {
 
             setTimeout(function () {
 
-                window.location.href = "profile.html";
+                window.location.href =
+                    "profile.html";
 
             }, 1000);
 
@@ -390,6 +399,89 @@ if (loginForm) {
         }
 
     });
+
+}
+
+
+/* =========================
+   FIREBASE FORGOT PASSWORD
+========================= */
+
+if (forgotPassword) {
+
+    forgotPassword.addEventListener(
+        "click",
+        async function (event) {
+
+            event.preventDefault();
+
+            const emailInput =
+                document.getElementById("login-email");
+
+            const message =
+                document.getElementById("login-message");
+
+            const email =
+                emailInput.value.trim();
+
+
+            if (!email) {
+
+                message.textContent =
+                    "Please enter your email address first.";
+
+                message.className =
+                    "auth-message error";
+
+                emailInput.focus();
+
+                return;
+
+            }
+
+
+            try {
+
+                await sendPasswordResetEmail(
+                    auth,
+                    email
+                );
+
+                message.textContent =
+                    "Password reset email sent. Please check your inbox.";
+
+                message.className =
+                    "auth-message success";
+
+
+            } catch (error) {
+
+                if (error.code === "auth/invalid-email") {
+
+                    message.textContent =
+                        "Please enter a valid email address.";
+
+                } else if (error.code === "auth/user-not-found") {
+
+                    message.textContent =
+                        "No account found with this email.";
+
+                } else {
+
+                    message.textContent =
+                        "Unable to send password reset email. Please try again.";
+
+                    console.error(error);
+
+                }
+
+                message.className =
+                    "auth-message error";
+
+            }
+
+        }
+    );
 
 }
 
