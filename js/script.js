@@ -1228,7 +1228,7 @@ function loadApplications() {
             <div class="application-info">
 
                 <h3>
-                    ${application.title}
+                   ${application.jobTitle || application.title || "Job Position"}
                 </h3>
 
                 <p class="application-company">
@@ -1285,77 +1285,98 @@ function setupApplyButton() {
             new URLSearchParams(window.location.search);
 
         const jobId =
-            params.get("job") || "frontend-developer";
+            params.get("id");
+
+        const postedJobs =
+            JSON.parse(
+                localStorage.getItem("jobnestPostedJobs") || "[]"
+            );
 
         const job =
-            jobDetailsData[jobId];
+            postedJobs.find(function (item) {
+                return String(item.id) === String(jobId);
+            });
 
         if (!job) {
             window.location.href = "applications.html";
             return;
         }
 
-
-        /* GET EXISTING APPLICATIONS */
-
         let applications =
             JSON.parse(
                 localStorage.getItem("jobnestApplications") || "[]"
             );
 
-
-        /* CHECK IF ALREADY APPLIED */
-
         const alreadyApplied =
             applications.some(function (application) {
-
-                return application.jobId === jobId;
-
+                return String(application.jobId) === String(job.id);
             });
 
-
         if (alreadyApplied) {
-
             window.location.href = "applications.html";
-
             return;
         }
 
+        const application = {
 
-        /* ADD NEW APPLICATION */
+            id: "application-" + Date.now(),
 
-        applications.push({
+            jobId: job.id,
 
-            jobId: jobId,
-            title: job.title,
-            company: job.company,
-            logo: job.logo,
-            location: job.location,
-            type: job.type,
-            mode: job.mode,
-            category: job.category,
-            salary: job.salary,
-            appliedAt: new Date().toISOString()
+            jobTitle:
+                job.title || "Job Position",
 
-        });
+            company:
+                job.company || "Company",
 
+            logo:
+                job.logo || "",
 
-        /* SAVE APPLICATION */
+            location:
+                job.location || "Not specified",
+
+            type:
+                job.type || "Not specified",
+
+            mode:
+                job.mode || "Not specified",
+
+            category:
+                job.category || "Not specified",
+
+            salary:
+                job.salary || "Salary not specified",
+
+            status:
+                "Applied",
+
+            appliedAt:
+                new Date().toISOString()
+        };
+
+        applications.unshift(application);
 
         localStorage.setItem(
             "jobnestApplications",
             JSON.stringify(applications)
         );
 
-
-        /* OPEN APPLICATIONS PAGE */
-
-        window.location.href = "applications.html";
+        window.location.href =
+            "applications.html";
 
     });
 
 }
 
+
+/* =====================================================
+   START APPLY BUTTON
+===================================================== */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    setupApplyButton
+);
 
 /* =====================================================
    START APPLY BUTTON
@@ -2497,71 +2518,48 @@ document.addEventListener("DOMContentLoaded", setupResourceDetailsPage);
 
 
 /* =====================================================
-   JOBNEST AUTH FORM VALIDATION
+   JOBNEST LOGIN FORM VALIDATION
 ===================================================== */
 
-function setupJobNestAuthForms() {
+function setupJobNestLoginForm() {
+
     const loginForm = document.getElementById("login-form");
-    const registerForm = document.getElementById("register-form");
 
-    if (loginForm) {
-        loginForm.addEventListener("submit", function (event) {
-            event.preventDefault();
+    if (!loginForm) return;
 
-            const email = document.getElementById("login-email").value.trim();
-            const password = document.getElementById("login-password").value;
-            const message = document.getElementById("login-message");
+    loginForm.addEventListener("submit", function (event) {
 
-            if (!email || !password) {
-                message.textContent = "Please enter your email and password.";
-                return;
-            }
+        event.preventDefault();
 
-            message.textContent =
-                "Form validated. Backend authentication will be connected next.";
-        });
-    }
+        const email =
+            document.getElementById("login-email").value.trim();
 
-    if (registerForm) {
-        registerForm.addEventListener("submit", function (event) {
-            event.preventDefault();
+        const password =
+            document.getElementById("login-password").value;
 
-            const name = document.getElementById("register-name").value.trim();
-            const email = document.getElementById("register-email").value.trim();
-            const password = document.getElementById("register-password").value;
-            const confirmPassword = document.getElementById("register-confirm").value;
-            const terms = document.getElementById("register-terms").checked;
-            const message = document.getElementById("register-message");
+        const message =
+            document.getElementById("login-message");
 
-            if (name.length < 2) {
-                message.textContent = "Please enter your full name.";
-                return;
-            }
 
-            if (password.length < 8) {
-                message.textContent = "Password must contain at least 8 characters.";
-                return;
-            }
-
-            if (password !== confirmPassword) {
-                message.textContent = "Passwords do not match.";
-                return;
-            }
-
-            if (!terms) {
-                message.textContent = "Please accept the terms to continue.";
-                return;
-            }
+        if (!email || !password) {
 
             message.textContent =
-                "Form validated. Backend registration will be connected next.";
-        });
-    }
+                "Please enter your email and password.";
+
+            return;
+        }
+
+        message.textContent =
+            "Form validated.";
+
+    });
 }
 
-document.addEventListener("DOMContentLoaded", setupJobNestAuthForms);
 
-
+document.addEventListener(
+    "DOMContentLoaded",
+    setupJobNestLoginForm
+);
 /* =====================================
    JOBNEST POST A JOB - DEMO SUBMISSION
 ===================================== */
@@ -3568,4 +3566,149 @@ document.addEventListener("DOMContentLoaded", function () {
         sidebarLogo.textContent = initials;
     }
 
+});
+
+/* =====================================
+   JOBNEST HOME SEARCH
+===================================== */
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const heroSearchForm =
+        document.getElementById("hero-search-form");
+
+    if (!heroSearchForm) return;
+
+    heroSearchForm.addEventListener("submit", function (event) {
+
+        event.preventDefault();
+
+        const keyword =
+            document.getElementById("hero-keyword").value.trim();
+
+        const location =
+            document.getElementById("hero-location").value;
+
+        const params = new URLSearchParams();
+
+        if (keyword) {
+            params.set("keyword", keyword);
+        }
+
+        if (location) {
+            params.set("location", location);
+        }
+
+        window.location.href =
+            "jobs.html" +
+            (params.toString() ? "?" + params.toString() : "");
+
+    });
+
+});
+
+/* =====================================
+   JOBNEST HOME - DYNAMIC POSTED JOBS
+===================================== */
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const homeJobsGrid =
+        document.getElementById("home-jobs-grid");
+
+    if (!homeJobsGrid) return;
+
+    const postedJobs =
+        JSON.parse(
+            localStorage.getItem("jobnestPostedJobs") || "[]"
+        );
+
+    if (!Array.isArray(postedJobs) || postedJobs.length === 0) {
+        return;
+    }
+
+    const dynamicJobs = postedJobs.map(function (job) {
+
+        const companyName =
+            job.company || "Company";
+
+        const initials =
+            companyName
+                .split(" ")
+                .map(function (word) {
+                    return word.charAt(0);
+                })
+                .join("")
+                .substring(0, 2)
+                .toUpperCase();
+
+        return `
+            <article class="job-card">
+
+                <div class="job-image">
+                    <div class="job-company-logo">
+                        ${initials}
+                    </div>
+                </div>
+
+                <div class="job-card-content">
+
+                    <span class="job-company-logo">
+                        ${initials}
+                    </span>
+
+                    <div class="job-info">
+
+                        <h3>
+                            ${job.title || "Job Position"}
+                        </h3>
+
+                        <p>
+                            ${companyName}
+                        </p>
+
+                        <div class="job-meta">
+
+                            <span>
+                                ${job.type || "Full-time"}
+                            </span>
+
+                            <span>
+                                ${job.location || "Not specified"}
+                            </span>
+
+                            <span>
+                                ${job.category || "General"}
+                            </span>
+
+                        </div>
+
+                        <strong>
+                            ${job.salary || "Salary not specified"}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+                <a
+                    href="job-details.html?id=${job.id}"
+                    class="job-link"
+                >
+                    View Job →
+                </a>
+
+            </article>
+        `;
+    }).join("");
+
+    homeJobsGrid.insertAdjacentHTML(
+        "afterbegin",
+        dynamicJobs
+    );
+
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+    setupApplyButton();
 });
