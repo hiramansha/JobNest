@@ -43,7 +43,7 @@
 
     <a href="employer-dashboard.html">Employer Dashboard</a>
 
-    <a href="login.html">Login</a>
+    <a href="#" id="logout-btn">Logout</a>
 
 </nav>
 
@@ -415,6 +415,45 @@ onAuthStateChanged(auth, function (user) {
     }
 
 });
+
+</script>
+
+<script type="module">
+
+import {
+    signOut
+} from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
+
+import {
+    auth
+} from "./js/firebase-config.js";
+
+
+const logoutButton = document.getElementById("logout-btn");
+
+if (logoutButton) {
+
+    logoutButton.addEventListener("click", async function (event) {
+
+        event.preventDefault();
+
+        try {
+
+            await signOut(auth);
+
+            window.location.href = "login.html";
+
+        } catch (error) {
+
+            console.error("Logout error:", error);
+
+            alert("Unable to logout. Please try again.");
+
+        }
+
+    });
+
+}
 
 </script>
 
