@@ -3567,155 +3567,272 @@ document.addEventListener("DOMContentLoaded", function () {
 
 });
 
-/* =====================================
-   JOBNEST DYNAMIC JOB DETAILS
-===================================== */
+    db
 
-document.addEventListener("DOMContentLoaded", function () {
 
-    const jobTitle = document.getElementById("detail-job-title");
+document.addEventListener("DOMContentLoaded", async function () {
+
+    const jobTitle =
+        document.getElementById("detail-job-title");
 
     if (!jobTitle) return;
 
-    const params = new URLSearchParams(window.location.search);
-    const jobId = params.get("id");
+
+    const params =
+        new URLSearchParams(window.location.search);
+
+    const jobId =
+        params.get("id") || params.get("job");
 
     if (!jobId) return;
 
-    const postedJobs =
-        JSON.parse(localStorage.getItem("jobnestPostedJobs")) || [];
 
-    const job = postedJobs.find(
-        function (item) {
-            return String(item.id) === String(jobId);
+    try {
+
+        const jobRef =
+            doc(db, "jobs", jobId);
+
+        const jobSnapshot =
+            await getDoc(jobRef);
+
+
+        if (!jobSnapshot.exists()) {
+
+            jobTitle.textContent =
+                "Job Not Found";
+
+            return;
         }
-    );
 
-    if (!job) {
-        jobTitle.textContent = "Job Not Found";
-        return;
-    }
 
-    /* JOB HEADER */
+        const job =
+            jobSnapshot.data();
 
-    document.getElementById("detail-job-title").textContent =
-        job.title || "Job Position";
 
-    document.getElementById("detail-company").textContent =
-        job.company || "Company";
+        /* JOB HEADER */
 
-    /* JOB INFORMATION */
+        jobTitle.textContent =
+            job.title || "Job Position";
 
-    document.getElementById("detail-job-type").textContent =
-        job.type || "Not specified";
 
-    document.getElementById("detail-location").textContent =
-        job.location || "Not specified";
-
-    document.getElementById("detail-work-mode").textContent =
-        job.mode || "Not specified";
-
-    document.getElementById("detail-category").textContent =
-        job.category || "Not specified";
-
-    document.getElementById("detail-salary").textContent =
-        job.salary || "Not specified";
-
-    /* DESCRIPTION */
-
-    const description =
-        document.getElementById("detail-description");
-
-    if (description) {
-        description.textContent =
-            job.description || "No description provided.";
-    }
-
-    /* RESPONSIBILITIES */
-
-    const responsibilitySection =
-        document.querySelectorAll(".job-content-section")[1];
-
-    if (responsibilitySection && job.responsibilities) {
-
-        const list =
-            responsibilitySection.querySelector(".job-detail-list");
-
-        if (list) {
-
-            list.innerHTML = job.responsibilities
-                .split(/\r?\n/)
-                .filter(item => item.trim())
-                .map(item => `<li>${item.trim()}</li>`)
-                .join("");
-
-        }
-    }
-
-    /* REQUIREMENTS */
-
-    const requirementSection =
-        document.querySelectorAll(".job-content-section")[2];
-
-    if (requirementSection && job.requirements) {
-
-        const list =
-            requirementSection.querySelector(".job-detail-list");
-
-        if (list) {
-
-            list.innerHTML = job.requirements
-                .split(/\r?\n/)
-                .filter(item => item.trim())
-                .map(item => `<li>${item.trim()}</li>`)
-                .join("");
-
-        }
-    }
-
-    /* COMPANY */
-
-    const sidebarCompanyName =
-        document.getElementById("sidebar-company-name");
-
-    if (sidebarCompanyName) {
-        sidebarCompanyName.textContent =
+        document.getElementById(
+            "detail-company"
+        ).textContent =
             job.company || "Company";
-    }
 
-    const sidebarCompanyDescription =
-        document.getElementById("sidebar-company-description");
 
-    if (sidebarCompanyDescription) {
-        sidebarCompanyDescription.textContent =
-            "Company information will be available soon.";
-    }
+        /* JOB INFORMATION */
 
-    /* COMPANY LOGO */
+        document.getElementById(
+            "detail-job-type"
+        ).textContent =
+            job.type || "Not specified";
 
-    const companyName =
-        job.company || "Company";
 
-    const initials =
-        companyName
-            .split(" ")
-            .map(word => word.charAt(0))
-            .join("")
-            .substring(0, 2)
-            .toUpperCase();
+        document.getElementById(
+            "detail-location"
+        ).textContent =
+            job.location || "Not specified";
 
-    const companyLogo =
-        document.getElementById("detail-company-logo");
 
-    const sidebarLogo =
-        document.getElementById("sidebar-company-logo");
+        document.getElementById(
+            "detail-work-mode"
+        ).textContent =
+            job.mode || "Not specified";
 
-    if (companyLogo) {
-        companyLogo.textContent = initials;
-    }
 
-    if (sidebarLogo) {
-        sidebarLogo.textContent = initials;
+        document.getElementById(
+            "detail-category"
+        ).textContent =
+            job.category || "Not specified";
+
+
+        document.getElementById(
+            "detail-salary"
+        ).textContent =
+            job.salary || "Not specified";
+
+
+        /* DESCRIPTION */
+
+        const description =
+            document.getElementById(
+                "detail-description"
+            );
+
+
+        if (description) {
+
+            description.textContent =
+                job.description ||
+                "No description provided.";
+
+        }
+
+
+        /* RESPONSIBILITIES */
+
+        const responsibilitySection =
+            document.querySelectorAll(
+                ".job-content-section"
+            )[1];
+
+
+        if (
+            responsibilitySection &&
+            job.responsibilities
+        ) {
+
+            const list =
+                responsibilitySection.querySelector(
+                    ".job-detail-list"
+                );
+
+
+            if (list) {
+
+                list.innerHTML =
+                    job.responsibilities
+                        .split(/\r?\n/)
+                        .filter(
+                            item => item.trim()
+                        )
+                        .map(
+                            item =>
+                                `<li>${item.trim()}</li>`
+                        )
+                        .join("");
+
+            }
+
+        }
+
+
+        /* REQUIREMENTS */
+
+        const requirementSection =
+            document.querySelectorAll(
+                ".job-content-section"
+            )[2];
+
+
+        if (
+            requirementSection &&
+            job.requirements
+        ) {
+
+            const list =
+                requirementSection.querySelector(
+                    ".job-detail-list"
+                );
+
+
+            if (list) {
+
+                list.innerHTML =
+                    job.requirements
+                        .split(/\r?\n/)
+                        .filter(
+                            item => item.trim()
+                        )
+                        .map(
+                            item =>
+                                `<li>${item.trim()}</li>`
+                        )
+                        .join("");
+
+            }
+
+        }
+
+
+        /* COMPANY */
+
+        const sidebarCompanyName =
+            document.getElementById(
+                "sidebar-company-name"
+            );
+
+
+        if (sidebarCompanyName) {
+
+            sidebarCompanyName.textContent =
+                job.company || "Company";
+
+        }
+
+
+        const sidebarCompanyDescription =
+            document.getElementById(
+                "sidebar-company-description"
+            );
+
+
+        if (sidebarCompanyDescription) {
+
+            sidebarCompanyDescription.textContent =
+                "Company information will be available soon.";
+
+        }
+
+
+        /* COMPANY LOGO */
+
+        const companyName =
+            job.company || "Company";
+
+
+        const initials =
+            companyName
+                .split(" ")
+                .map(
+                    word =>
+                        word.charAt(0)
+                )
+                .join("")
+                .substring(0, 2)
+                .toUpperCase();
+
+
+        const companyLogo =
+            document.getElementById(
+                "detail-company-logo"
+            );
+
+
+        const sidebarLogo =
+            document.getElementById(
+                "sidebar-company-logo"
+            );
+
+
+        if (companyLogo) {
+
+            companyLogo.textContent =
+                initials;
+
+        }
+
+
+        if (sidebarLogo) {
+
+            sidebarLogo.textContent =
+                initials;
+
+        }
+
+
+    } catch (error) {
+
+        console.error(
+            "Error loading job:",
+            error
+        );
+
+
+        jobTitle.textContent =
+            "Unable to load job details.";
+
     }
 
 });
