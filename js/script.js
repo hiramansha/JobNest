@@ -2561,87 +2561,239 @@ document.addEventListener(
     setupJobNestLoginForm
 );
 /* =====================================
-   JOBNEST POST A JOB - DEMO SUBMISSION
+   JOBNEST POST A JOB - FIRESTORE
 ===================================== */
 
+import {
+    collection,
+    addDoc,
+    doc,
+    getDoc,
+    updateDoc
+} from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
+
+import {
+    onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
+
+import {
+    auth,
+    db
+} from "./firebase-config.js";
+
+
 document.addEventListener("DOMContentLoaded", function () {
-  const postJobForm = document.getElementById("post-job-form");
 
-  if (!postJobForm) return;
+    const postJobForm =
+        document.getElementById("post-job-form");
 
-  const message = document.getElementById("post-job-message");
+    if (!postJobForm) return;
 
-  postJobForm.addEventListener("submit", function (event) {
-    event.preventDefault();
 
-    if (!postJobForm.reportValidity()) return;
+    const message =
+        document.getElementById("post-job-message");
 
-    const formData = new FormData(postJobForm);
 
-    const newJob = {
-      id: "job-" + Date.now(),
-      title: String(formData.get("title") || "").trim(),
-      company: String(formData.get("company") || "").trim(),
-      category: String(formData.get("category") || "").trim(),
-      location: String(formData.get("location") || "").trim(),
-      type: String(formData.get("type") || "").trim(),
-      mode: String(formData.get("mode") || "").trim(),
-      salary: String(formData.get("salary") || "").trim(),
-      description: String(formData.get("description") || "").trim(),
-      responsibilities: String(formData.get("responsibilities") || "").trim(),
-      requirements: String(formData.get("requirements") || "").trim(),
-      email: String(formData.get("email") || "").trim(),
-      postedAt: new Date().toISOString(),
-      status: "Demo - Not published"
-    };
+    onAuthStateChanged(auth, async function (user) {
 
-    try {
-      const savedJobs = JSON.parse(
-        localStorage.getItem("jobnestPostedJobs") || "[]"
-      );
+        if (!user) {
+            message.textContent =
+                "Please sign in before posting a job.";
 
-      if (!Array.isArray(savedJobs)) {
-        throw new Error("Saved job data is not a list.");
-      }
+            message.className =
+                "post-job-message error";
 
-      const editData =
-    JSON.parse(localStorage.getItem("jobnestEditJob") || "null");
+            return;
+        }
 
-if (
-    editData &&
-    editData.job &&
-    Number.isInteger(editData.index) &&
-    savedJobs[editData.index]
-) {
 
-    newJob.id = editData.job.id || newJob.id;
-    newJob.postedAt = editData.job.postedAt || newJob.postedAt;
+        postJobForm.addEventListener(
+            "submit",
+            async function (event) {
 
-    savedJobs[editData.index] = newJob;
+                event.preventDefault();
 
-    localStorage.removeItem("jobnestEditJob");
 
-} else {
+                if (!postJobForm.reportValidity()) {
+                    return;
+                }
 
-    savedJobs.unshift(newJob);
 
-}
-      localStorage.setItem("jobnestPostedJobs", JSON.stringify(savedJobs));
+                const formData =
+                    new FormData(postJobForm);
 
-      message.textContent =
-        "Your job listing has been saved in this browser's demo storage. It is not publicly published yet; backend publishing will be connected next.";
-      message.className = "post-job-message success";
 
-      postJobForm.reset();
-      message.scrollIntoView({ behavior: "smooth", block: "nearest" });
-    } catch (error) {
-      message.textContent =
-        "Unable to save this demo listing in your browser. Please try again.";
-      message.className = "post-job-message error";
-    }
-  });
+                const newJob = {
+
+                    title:
+                        String(
+                            formData.get("title") || ""
+                        ).trim(),
+
+                    company:
+                        String(
+                            formData.get("company") || ""
+                        ).trim(),
+
+                    category:
+                        String(
+                            formData.get("category") || ""
+                        ).trim(),
+
+                    location:
+                        String(
+                            formData.get("location") || ""
+                        ).trim(),
+
+                    type:
+                        String(
+                            formData.get("type") || ""
+                        ).trim(),
+
+                    mode:
+                        String(
+                            formData.get("mode") || ""
+                        ).trim(),
+
+                    salary:
+                        String(
+                            formData.get("salary") || ""
+                        ).trim(),
+
+                    description:
+                        String(
+                            formData.get("description") || ""
+                        ).trim(),
+
+                    responsibilities:
+                        String(
+                            formData.get("responsibilities") || ""
+                        ).trim(),
+
+                    requirements:
+                        String(
+                            formData.get("requirements") || ""
+                        ).trim(),
+
+                    email:
+                        String(
+                            formData.get("email") || ""
+                        ).trim(),
+
+                    employerId:
+                        user.uid,
+
+                    employerEmail:
+                        user.email || "",
+
+                    postedAt:
+                        new Date().toISOString(),
+
+                    status:
+                        "Active"
+                };
+
+
+                try {
+
+                    const editData =
+                        JSON.parse(
+                            localStorage.getItem(
+                                "jobnestEditJob"
+                            ) || "null"
+                        );
+
+
+                    if (
+                        editData &&
+                        editData.job &&
+                        editData.job.id
+                    ) {
+
+                        const jobRef =
+                            doc(
+                                db,
+                                "jobs",
+                                editData.job.id
+                            );
+
+
+                        const existingJob =
+                            await getDoc(jobRef);
+
+
+                        if (
+                            existingJob.exists() &&
+                            existingJob.data().employerId === user.uid
+                        ) {
+
+                            await updateDoc(
+                                jobRef,
+                                newJob
+                            );
+
+                        } else {
+
+                            throw new Error(
+                                "Job not found or unauthorized."
+                            );
+
+                        }
+
+
+                        localStorage.removeItem(
+                            "jobnestEditJob"
+                        );
+
+
+                    } else {
+
+                        await addDoc(
+                            collection(db, "jobs"),
+                            newJob
+                        );
+
+                    }
+
+
+                    message.textContent =
+                        "Job listing saved successfully!";
+
+                    message.className =
+                        "post-job-message success";
+
+
+                    postJobForm.reset();
+
+
+                    message.scrollIntoView({
+                        behavior: "smooth",
+                        block: "nearest"
+                    });
+
+
+                } catch (error) {
+
+                    console.error(
+                        "Error saving job:",
+                        error
+                    );
+
+
+                    message.textContent =
+                        "Unable to save the job listing. Please try again.";
+
+                    message.className =
+                        "post-job-message error";
+
+                }
+
+            }
+        );
+
+    });
+
 });
-
 /* =====================================
    JOBNEST APPLICATIONS PAGE
 ===================================== */
