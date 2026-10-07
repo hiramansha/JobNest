@@ -392,19 +392,56 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
 
 import {
-    auth
+    doc,
+    getDoc,
+    setDoc
+} from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
+
+import {
+    auth,
+    db
 } from "./js/firebase-config.js";
 
 
-onAuthStateChanged(auth, function (user) {
+const profileForm =
+    document.getElementById("profile-form");
+
+const profileMessage =
+    document.getElementById("profile-message");
+
+
+onAuthStateChanged(auth, async function (user) {
 
     if (!user) {
         window.location.href = "login.html";
         return;
     }
 
-    const nameField = document.getElementById("profile-name");
-    const emailField = document.getElementById("profile-email");
+
+    const nameField =
+        document.getElementById("profile-name");
+
+    const emailField =
+        document.getElementById("profile-email");
+
+    const phoneField =
+        document.getElementById("profile-phone");
+
+    const locationField =
+        document.getElementById("profile-location");
+
+    const titleField =
+        document.getElementById("profile-title");
+
+    const experienceField =
+        document.getElementById("profile-experience");
+
+    const skillsField =
+        document.getElementById("profile-skills");
+
+    const bioField =
+        document.getElementById("profile-bio");
+
 
     if (nameField) {
         nameField.value = user.displayName || "";
@@ -412,6 +449,133 @@ onAuthStateChanged(auth, function (user) {
 
     if (emailField) {
         emailField.value = user.email || "";
+    }
+
+
+    try {
+
+        const profileRef =
+            doc(db, "users", user.uid);
+
+        const profileSnapshot =
+            await getDoc(profileRef);
+
+
+        if (profileSnapshot.exists()) {
+
+            const data =
+                profileSnapshot.data();
+
+
+            if (nameField) {
+                nameField.value = data.name || user.displayName || "";
+            }
+
+            if (phoneField) {
+                phoneField.value = data.phone || "";
+            }
+
+            if (locationField) {
+                locationField.value = data.location || "";
+            }
+
+            if (titleField) {
+                titleField.value = data.title || "";
+            }
+
+            if (experienceField) {
+                experienceField.value = data.experience || "";
+            }
+
+            if (skillsField) {
+                skillsField.value = data.skills || "";
+            }
+
+            if (bioField) {
+                bioField.value = data.bio || "";
+            }
+
+        }
+
+    } catch (error) {
+
+        console.error("Error loading profile:", error);
+
+    }
+
+
+    if (profileForm) {
+
+        profileForm.addEventListener(
+            "submit",
+            async function (event) {
+
+                event.preventDefault();
+
+
+                try {
+
+                    await setDoc(
+                        doc(db, "users", user.uid),
+                        {
+                            name:
+                                nameField.value.trim(),
+
+                            email:
+                                user.email || "",
+
+                            phone:
+                                phoneField.value.trim(),
+
+                            location:
+                                locationField.value.trim(),
+
+                            title:
+                                titleField.value.trim(),
+
+                            experience:
+                                experienceField.value,
+
+                            skills:
+                                skillsField.value.trim(),
+
+                            bio:
+                                bioField.value.trim(),
+
+                            updatedAt:
+                                new Date().toISOString()
+                        },
+                        {
+                            merge: true
+                        }
+                    );
+
+
+                    profileMessage.textContent =
+                        "Profile saved successfully!";
+
+                    profileMessage.className =
+                        "profile-message success";
+
+
+                } catch (error) {
+
+                    console.error(
+                        "Error saving profile:",
+                        error
+                    );
+
+                    profileMessage.textContent =
+                        "Unable to save profile. Please try again.";
+
+                    profileMessage.className =
+                        "profile-message error";
+
+                }
+
+            }
+        );
+
     }
 
 });
