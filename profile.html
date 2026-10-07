@@ -385,6 +385,38 @@
 
 
 <script src="js/script.js"></script>
+<script type="module">
+
+import {
+    onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
+
+import {
+    auth
+} from "./js/firebase-config.js";
+
+
+onAuthStateChanged(auth, function (user) {
+
+    if (!user) {
+        window.location.href = "login.html";
+        return;
+    }
+
+    const nameField = document.getElementById("profile-name");
+    const emailField = document.getElementById("profile-email");
+
+    if (nameField) {
+        nameField.value = user.displayName || "";
+    }
+
+    if (emailField) {
+        emailField.value = user.email || "";
+    }
+
+});
+
+</script>
 
 </body>
 </html>
