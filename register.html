@@ -209,16 +209,25 @@
 
 <script src="js/script.js"></script>
 
-<script>
-document.addEventListener("DOMContentLoaded", function () {
+<script type="module">
 
-    const registerForm = document.getElementById("register-form");
+import {
+    createUserWithEmailAndPassword,
+    updateProfile
+} from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
 
-    if (!registerForm) return;
+import { auth } from "./js/firebase-config.js";
 
-    registerForm.addEventListener("submit", function (event) {
+
+const registerForm = document.getElementById("register-form");
+
+
+if (registerForm) {
+
+    registerForm.addEventListener("submit", async function (event) {
 
         event.preventDefault();
+
 
         const name =
             document.getElementById("register-name").value.trim();
@@ -238,38 +247,83 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (password !== confirmPassword) {
 
-            message.textContent = "Passwords do not match.";
-            message.className = "auth-message error";
+            message.textContent =
+                "Passwords do not match.";
+
+            message.className =
+                "auth-message error";
 
             return;
         }
 
 
-       const user = {
-    name: name,
-    email: email,
-    password: password
-};
+        try {
 
-        localStorage.setItem(
-            "jobnestUser",
-            JSON.stringify(user)
-        );
+            const userCredential =
+                await createUserWithEmailAndPassword(
+                    auth,
+                    email,
+                    password
+                );
 
 
-        message.textContent =
-            "Account created successfully! Redirecting to Sign In...";
+            await updateProfile(
+                userCredential.user,
+                {
+                    displayName: name
+                }
+            );
 
-        message.className = "auth-message success";
+
+            message.textContent =
+                "Account created successfully! Redirecting to Sign In...";
+
+            message.className =
+                "auth-message success";
 
 
-        setTimeout(function () {
-            window.location.href = "login.html";
-        }, 1500);
+            setTimeout(function () {
+
+                window.location.href =
+                    "login.html";
+
+            }, 1500);
+
+
+        } catch (error) {
+
+            if (error.code === "auth/email-already-in-use") {
+
+                message.textContent =
+                    "This email is already registered.";
+
+            } else if (error.code === "auth/weak-password") {
+
+                message.textContent =
+                    "Password must be at least 6 characters.";
+
+            } else if (error.code === "auth/invalid-email") {
+
+                message.textContent =
+                    "Please enter a valid email address.";
+
+            } else {
+
+                message.textContent =
+                    "Unable to create account. Please try again.";
+
+                console.error(error);
+            }
+
+
+            message.className =
+                "auth-message error";
+        }
 
     });
 
-});
+}
+
 </script>
 
 </body>
