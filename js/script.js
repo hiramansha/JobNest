@@ -1087,7 +1087,7 @@ const jobDetailsData = {
    LOAD SELECTED JOB
 ===================================================== */
 
-function loadJobDetails() {
+async function loadJobDetails() {
 
     const jobTitleElement = document.getElementById("detail-job-title");
 
@@ -1097,9 +1097,18 @@ function loadJobDetails() {
 
     const params = new URLSearchParams(window.location.search);
 
-    const jobId = params.get("job") || "frontend-developer";
+    const jobId =
+    params.get("id") ||
+    params.get("job") ||
+    "frontend-developer";
 
-    const job = jobDetailsData[jobId];
+   const jobRef = doc(db, "jobs", jobId);
+
+const jobSnapshot = await getDoc(jobRef);
+
+const job = jobSnapshot.exists()
+    ? jobSnapshot.data()
+    : null;
 
     if (!job) {
         return;
@@ -1233,74 +1242,96 @@ function loadJobDetails() {
     document.title = `${job.title} | JobNest`;
 
 
-    /* SAVE BUTTON */
+        /* SAVE BUTTON */
 
     const saveButton =
         document.getElementById("detail-save-job");
 
-    if (saveButton) {
+    if (saveButton && auth.currentUser) {
 
-        let savedJobs =
-            JSON.parse(
-                localStorage.getItem("jobnestSavedJobs") || "[]"
-            );
+        const savedJobsSnapshot =
+            await getDocs(collection(db, "savedJobs"));
 
-        const alreadySaved = savedJobs.some(
-            savedJob => savedJob.title === job.title
-        );
+        const existingSavedJob =
+            savedJobsSnapshot.docs.find(savedDoc => {
 
-        if (alreadySaved) {
+                const savedData = savedDoc.data();
+
+                return (
+                    savedData.userId === auth.currentUser.uid &&
+                    savedData.jobId === jobId
+                );
+
+            });
+
+        if (existingSavedJob) {
             saveButton.textContent = "Saved";
             saveButton.classList.add("saved");
         }
 
-        saveButton.addEventListener("click", function () {
+        saveButton.addEventListener(
+            "click",
+            async function () {
 
-            let currentSavedJobs =
-                JSON.parse(
-                    localStorage.getItem("jobnestSavedJobs") || "[]"
-                );
+                const currentSnapshot =
+                    await getDocs(collection(db, "savedJobs"));
 
-            const index = currentSavedJobs.findIndex(
-                savedJob => savedJob.title === job.title
-            );
+                const existingDoc =
+                    currentSnapshot.docs.find(savedDoc => {
 
-            if (index === -1) {
+                        const savedData = savedDoc.data();
 
-                currentSavedJobs.push({
-                    title: job.title,
-                    company: job.company,
-                    location: job.location,
-                    salary: job.salary
-                });
+                        return (
+                            savedData.userId === auth.currentUser.uid &&
+                            savedData.jobId === jobId
+                        );
 
-                localStorage.setItem(
-                    "jobnestSavedJobs",
-                    JSON.stringify(currentSavedJobs)
-                );
+                    });
 
-                saveButton.textContent = "Saved";
-                saveButton.classList.add("saved");
+                if (existingDoc) {
 
-            } else {
+                    await deleteDoc(
+                        doc(db, "savedJobs", existingDoc.id)
+                    );
 
-                currentSavedJobs.splice(index, 1);
+                    saveButton.textContent = "Save Job";
+                    saveButton.classList.remove("saved");
 
-                localStorage.setItem(
-                    "jobnestSavedJobs",
-                    JSON.stringify(currentSavedJobs)
-                );
+                } else {
 
-                saveButton.textContent = "Save Job";
-                saveButton.classList.remove("saved");
+                    const companyName =
+                        job.company || "JobNest";
+
+                    const logo =
+                        companyName
+                            .split(" ")
+                            .map(word => word[0])
+                            .join("")
+                            .substring(0, 2)
+                            .toUpperCase();
+
+                    await addDoc(
+                        collection(db, "savedJobs"),
+                        {
+                            userId: auth.currentUser.uid,
+                            jobId: jobId,
+                            title: job.title || "",
+                            company: job.company || "",
+                            location: job.location || "",
+                            salary: job.salary || "",
+                            logo: logo || "JN",
+                            savedAt: new Date().toISOString()
+                        }
+                    );
+
+                    saveButton.textContent = "Saved";
+                    saveButton.classList.add("saved");
+
+                }
+
             }
-
-        });
+        );
     }
-
-}
-
-
 /* =====================================================
    START JOB DETAILS
 ===================================================== */
@@ -1532,7 +1563,7 @@ document.addEventListener(
    SAVED JOBS PAGE
 ===================================================== */
 
-function loadSavedJobsPage() {
+async function loadSavedJobsPage() {
 
     const savedJobsList =
         document.getElementById("saved-jobs-list");
@@ -1547,46 +1578,58 @@ function loadSavedJobsPage() {
     const savedJobsCount =
         document.getElementById("saved-jobs-count");
 
-    let savedJobs =
-        JSON.parse(
-            localStorage.getItem("jobnestSavedJobs") || "[]"
-        );
-
-
     savedJobsList.innerHTML = "";
 
+    if (!auth.currentUser) {
+
+        if (savedJobsCount) {
+            savedJobsCount.textContent = "0 saved jobs";
+        }
+
+        if (noSavedJobs) {
+            noSavedJobs.style.display = "block";
+        }
+
+        return;
+    }
+
+    const savedJobsSnapshot =
+        await getDocs(collection(db, "savedJobs"));
+
+    const savedJobs =
+        savedJobsSnapshot.docs
+            .map(savedDoc => ({
+                id: savedDoc.id,
+                ...savedDoc.data()
+            }))
+            .filter(job =>
+                job.userId === auth.currentUser.uid
+            );
 
     if (savedJobsCount) {
         savedJobsCount.textContent =
             `${savedJobs.length} saved job${savedJobs.length === 1 ? "" : "s"}`;
     }
 
-
     if (savedJobs.length === 0) {
 
-        noSavedJobs.style.display = "block";
+        if (noSavedJobs) {
+            noSavedJobs.style.display = "block";
+        }
 
         return;
     }
 
+    if (noSavedJobs) {
+        noSavedJobs.style.display = "none";
+    }
 
-    noSavedJobs.style.display = "none";
-
-
-    savedJobs.forEach(function (job, index) {
+    savedJobs.forEach(function (job) {
 
         const card =
             document.createElement("div");
 
         card.className = "saved-job-card";
-
-        const jobSlug =
-            job.jobId ||
-            job.title
-                .toLowerCase()
-                .replace(/[^a-z0-9]+/g, "-")
-                .replace(/^-|-$/g, "");
-
 
         card.innerHTML = `
             <div class="saved-job-logo">
@@ -1596,16 +1639,21 @@ function loadSavedJobsPage() {
             <div class="saved-job-info">
 
                 <h3>
-                    ${job.title}
+                    ${job.title || "Untitled Job"}
                 </h3>
 
                 <p class="saved-job-company">
-                    ${job.company}
+                    ${job.company || "JobNest"}
                 </p>
 
                 <div class="saved-job-meta">
-                    <span>${job.location}</span>
-                    <span>${job.salary}</span>
+                    <span>
+                        ${job.location || "Not specified"}
+                    </span>
+
+                    <span>
+                        ${job.salary || "Salary not specified"}
+                    </span>
                 </div>
 
             </div>
@@ -1613,7 +1661,7 @@ function loadSavedJobsPage() {
             <div class="saved-job-actions">
 
                 <a
-                    href="job-details.html?job=${jobSlug}"
+                    href="job-details.html?id=${job.jobId}"
                     class="saved-job-view"
                 >
                     View Job
@@ -1622,7 +1670,7 @@ function loadSavedJobsPage() {
                 <button
                     type="button"
                     class="saved-job-remove"
-                    data-index="${index}"
+                    data-id="${job.id}"
                 >
                     Remove
                 </button>
@@ -1634,36 +1682,35 @@ function loadSavedJobsPage() {
 
     });
 
-
-    /* REMOVE SAVED JOB */
-
     document
         .querySelectorAll(".saved-job-remove")
         .forEach(function (button) {
 
             button.addEventListener(
                 "click",
-                function () {
+                async function () {
 
-                    const index =
-                        Number(button.dataset.index);
+                    const savedJobId =
+                        button.dataset.id;
 
-                   const confirmRemove = confirm(
-    "Are you sure you want to remove this saved job?"
-);
+                    const confirmRemove =
+                        confirm(
+                            "Are you sure you want to remove this saved job?"
+                        );
 
-if (!confirmRemove) {
-    return;
-}
+                    if (!confirmRemove) {
+                        return;
+                    }
 
-savedJobs.splice(index, 1);
+                    await deleteDoc(
+                        doc(
+                            db,
+                            "savedJobs",
+                            savedJobId
+                        )
+                    );
 
-localStorage.setItem(
-    "jobnestSavedJobs",
-    JSON.stringify(savedJobs)
-);
-
-loadSavedJobsPage();
+                    loadSavedJobsPage();
 
                 }
             );
@@ -1677,10 +1724,9 @@ loadSavedJobsPage();
    START SAVED JOBS PAGE
 ===================================================== */
 
-document.addEventListener(
-    "DOMContentLoaded",
-    loadSavedJobsPage
-);
+onAuthStateChanged(auth, function () {
+    loadSavedJobsPage();
+});
 
 /* =====================================================
    PROFILE PAGE
@@ -2697,32 +2743,6 @@ function setupJobNestLoginForm() {
 }
 
 
-document.addEventListener(
-    "DOMContentLoaded",
-    setupJobNestLoginForm
-);
-/* =====================================
-   JOBNEST POST A JOB - FIRESTORE
-===================================== */
-
-import {
-    collection,
-    addDoc,
-    doc,
-    getDoc,
-    getDocs,
-    updateDoc
-} from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
-
-import {
-    onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
-
-import {
-    auth,
-    db
-} from "./firebase-config.js";
-
 
 document.addEventListener("DOMContentLoaded", function () {
 
@@ -3709,7 +3729,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
 });
 
-    db
 
 
 document.addEventListener("DOMContentLoaded", async function () {
@@ -4123,3 +4142,4 @@ document.addEventListener("DOMContentLoaded", function () {
 document.addEventListener("DOMContentLoaded", function () {
     setupApplyButton();
 });
+}
