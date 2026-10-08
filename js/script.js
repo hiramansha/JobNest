@@ -1368,7 +1368,7 @@ document.addEventListener(
    APPLICATIONS PAGE
 ===================================================== */
 
-function loadApplications() {
+async function loadApplications() {
 
     const applicationsList =
         document.getElementById("applications-list");
@@ -1383,72 +1383,117 @@ function loadApplications() {
     const applicationsCount =
         document.getElementById("applications-count");
 
-    const applications =
-        JSON.parse(
-            localStorage.getItem("jobnestApplications") || "[]"
-        );
-
-
     applicationsList.innerHTML = "";
 
+    const user = auth.currentUser;
 
-    if (applicationsCount) {
-        applicationsCount.textContent =
-            `${applications.length} application${applications.length === 1 ? "" : "s"}`;
-    }
+    if (!user) {
+        if (applicationsCount) {
+            applicationsCount.textContent = "0 applications";
+        }
 
-
-    if (applications.length === 0) {
-
-        noApplications.style.display = "block";
+        if (noApplications) {
+            noApplications.style.display = "block";
+        }
 
         return;
     }
 
+    try {
 
-    noApplications.style.display = "none";
+        const snapshot =
+            await getDocs(collection(db, "applications"));
 
+        const applications =
+            snapshot.docs
+                .map(function (applicationDoc) {
+                    return {
+                        id: applicationDoc.id,
+                        ...applicationDoc.data()
+                    };
+                })
+                .filter(function (application) {
+                    return application.userId === user.uid;
+                })
+                .sort(function (a, b) {
+                    return new Date(b.appliedAt || 0) -
+                           new Date(a.appliedAt || 0);
+                });
 
-    applications.forEach(function (application) {
+        if (applicationsCount) {
+            applicationsCount.textContent =
+                `${applications.length} application${applications.length === 1 ? "" : "s"}`;
+        }
 
-        const card = document.createElement("div");
+        if (applications.length === 0) {
 
-        card.className = "application-card";
+            if (noApplications) {
+                noApplications.style.display = "block";
+            }
 
-        card.innerHTML = `
-            <div class="application-logo">
-                ${application.logo || "JN"}
-            </div>
+            return;
+        }
 
-            <div class="application-info">
+        if (noApplications) {
+            noApplications.style.display = "none";
+        }
 
-                <h3>
-                   ${application.jobTitle || application.title || "Job Position"}
-                </h3>
+        applications.forEach(function (application) {
 
-                <p class="application-company">
-                    ${application.company}
-                </p>
+            const card =
+                document.createElement("div");
 
-                <div class="application-meta">
-                    <span>${application.location}</span>
-                    <span>${application.type}</span>
-                    <span>${application.salary}</span>
+            card.className = "application-card";
+
+            card.innerHTML = `
+                <div class="application-logo">
+                    ${application.company
+                        ? application.company
+                            .split(" ")
+                            .map(word => word[0])
+                            .join("")
+                            .substring(0, 2)
+                            .toUpperCase()
+                        : "JN"}
                 </div>
 
-            </div>
+                <div class="application-info">
 
-            <div class="application-status">
-                Application Sent
-            </div>
-        `;
+                    <h3>
+                        ${application.jobTitle || "Job Position"}
+                    </h3>
 
-        applicationsList.appendChild(card);
+                    <p class="application-company">
+                        ${application.company || "Company"}
+                    </p>
 
-    });
+                    <div class="application-meta">
+                        <span>${application.location || "Not specified"}</span>
+                        <span>${application.type || "Not specified"}</span>
+                        <span>${application.salary || "Salary not specified"}</span>
+                    </div>
+
+                </div>
+
+                <div class="application-status">
+                    ${application.status || "Applied"}
+                </div>
+            `;
+
+            applicationsList.appendChild(card);
+
+        });
+
+    } catch (error) {
+
+        console.error(
+            "Error loading applications:",
+            error
+        );
+
+    }
 
 }
-
 
 /* =====================================================
    START APPLICATIONS
@@ -1463,7 +1508,7 @@ document.addEventListener(
    APPLY NOW
 ===================================================== */
 
-function setupApplyButton() {
+async function setupApplyButton() {
 
     const applyButton =
         document.getElementById("apply-job-btn");
@@ -1472,9 +1517,17 @@ function setupApplyButton() {
         return;
     }
 
-    applyButton.addEventListener("click", function (event) {
+    applyButton.addEventListener("click", async function (event) {
 
         event.preventDefault();
+
+        const user = auth.currentUser;
+
+        if (!user) {
+            alert("Please login to apply for this job.");
+            window.location.href = "login.html";
+            return;
+        }
 
         const params =
             new URLSearchParams(window.location.search);
@@ -1482,88 +1535,85 @@ function setupApplyButton() {
         const jobId =
             params.get("id");
 
-        const postedJobs =
-            JSON.parse(
-                localStorage.getItem("jobnestPostedJobs") || "[]"
-            );
-
-        const job =
-            postedJobs.find(function (item) {
-                return String(item.id) === String(jobId);
-            });
-
-        if (!job) {
-            window.location.href = "applications.html";
+        if (!jobId) {
             return;
         }
 
-        let applications =
-            JSON.parse(
-                localStorage.getItem("jobnestApplications") || "[]"
+        try {
+
+            const jobSnapshot =
+                await getDoc(doc(db, "jobs", jobId));
+
+            if (!jobSnapshot.exists()) {
+                alert("Job not found.");
+                return;
+            }
+
+            const job =
+                jobSnapshot.data();
+
+            const applicationsSnapshot =
+                await getDocs(collection(db, "applications"));
+
+            const alreadyApplied =
+                applicationsSnapshot.docs.some(function (applicationDoc) {
+
+                    const application =
+                        applicationDoc.data();
+
+                    return (
+                        application.jobId === jobId &&
+                        application.userId === user.uid
+                    );
+
+                });
+
+            if (alreadyApplied) {
+                alert("You have already applied for this job.");
+                window.location.href = "applications.html";
+                return;
+            }
+
+            await addDoc(
+                collection(db, "applications"),
+                {
+                    userId: user.uid,
+                    applicantEmail: user.email || "",
+                    jobId: jobId,
+                    jobTitle: job.title || "Job Position",
+                    company: job.company || "Company",
+                    location: job.location || "Not specified",
+                    type: job.type || "Not specified",
+                    mode: job.mode || "Not specified",
+                    category: job.category || "Not specified",
+                    salary: job.salary || "Salary not specified",
+                    employerId: job.employerId || "",
+                    employerEmail: job.employerEmail || "",
+                    status: "Applied",
+                    appliedAt: new Date().toISOString()
+                }
             );
 
-        const alreadyApplied =
-            applications.some(function (application) {
-                return String(application.jobId) === String(job.id);
-            });
+            alert("Application submitted successfully!");
 
-        if (alreadyApplied) {
-            window.location.href = "applications.html";
-            return;
+            window.location.href =
+                "applications.html";
+
+        } catch (error) {
+
+            console.error(
+                "Error submitting application:",
+                error
+            );
+
+            alert("Unable to submit application. Please try again.");
+
         }
-
-        const application = {
-
-            id: "application-" + Date.now(),
-
-            jobId: job.id,
-
-            jobTitle:
-                job.title || "Job Position",
-
-            company:
-                job.company || "Company",
-
-            logo:
-                job.logo || "",
-
-            location:
-                job.location || "Not specified",
-
-            type:
-                job.type || "Not specified",
-
-            mode:
-                job.mode || "Not specified",
-
-            category:
-                job.category || "Not specified",
-
-            salary:
-                job.salary || "Salary not specified",
-
-            status:
-                "Applied",
-
-            appliedAt:
-                new Date().toISOString()
-        };
-
-        applications.unshift(application);
-
-        localStorage.setItem(
-            "jobnestApplications",
-            JSON.stringify(applications)
-        );
-
-        window.location.href =
-            "applications.html";
 
     });
 
 }
 
-
 /* =====================================================
    START APPLY BUTTON
 ===================================================== */
@@ -1577,10 +1627,7 @@ document.addEventListener(
    START APPLY BUTTON
 ===================================================== */
 
-document.addEventListener(
-    "DOMContentLoaded",
-    setupApplyButton
-);
+
 
 /* =====================================================
    SAVED JOBS PAGE
