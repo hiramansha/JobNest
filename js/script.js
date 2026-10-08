@@ -1166,7 +1166,9 @@ const job = jobSnapshot.exists()
     const image = document.getElementById("detail-job-image");
 
     if (image) {
-        image.src = job.image;
+        image.src =
+            job.image ||
+            "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1200&q=80";
         image.alt = job.title;
     }
 
