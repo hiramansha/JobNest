@@ -3394,35 +3394,22 @@ async function setupEmployerDashboard() {
         return;
     }
 
-    let postedJobs = [];
+    const postedJobs =
+        JSON.parse(
+            localStorage.getItem("jobnestPostedJobs")
+        ) || [];
+
     let applications = [];
 
     try {
 
-        const jobsSnapshot =
-            await getDocs(
-                collection(db, "jobs")
-            );
-
-        postedJobs =
-            jobsSnapshot.docs
-                .map(function (jobDoc) {
-                    return {
-                        id: jobDoc.id,
-                        ...jobDoc.data()
-                    };
-                })
-                .filter(function (job) {
-                    return job.employerId === user.uid;
-                });
-
-        const applicationsSnapshot =
+        const snapshot =
             await getDocs(
                 collection(db, "applications")
             );
 
         applications =
-            applicationsSnapshot.docs
+            snapshot.docs
                 .map(function (applicationDoc) {
                     return {
                         id: applicationDoc.id,
@@ -3436,7 +3423,7 @@ async function setupEmployerDashboard() {
     } catch (error) {
 
         console.error(
-            "Error loading employer dashboard:",
+            "Error loading employer applications:",
             error
         );
 
@@ -3538,7 +3525,7 @@ async function setupEmployerDashboard() {
 
         jobsList.innerHTML =
             postedJobs
-                .map(function (job) {
+                .map(function (job, index) {
 
                     return `
                         <div class="dashboard-job-card">
@@ -3566,10 +3553,31 @@ async function setupEmployerDashboard() {
 
                                 <a
                                     href="job-details.html?id=${job.id}"
-                                    class="btn btn-secondary"
+                                    class="btn btn-outline"
                                 >
-                                    View Job
+                                    View
                                 </a>
+
+                                <button
+                                    class="btn btn-primary"
+                                    onclick="editEmployerJob(${index})"
+                                >
+                                    Edit Job
+                                </button>
+
+                                <button
+                                    class="btn btn-danger"
+                                    onclick="closeEmployerJob(${index})"
+                                >
+                                    Close Job
+                                </button>
+
+                                <button
+                                    class="btn btn-danger"
+                                    onclick="deleteEmployerJob(${index})"
+                                >
+                                    Delete Job
+                                </button>
 
                             </div>
 
@@ -3595,13 +3603,14 @@ async function setupEmployerDashboard() {
         return;
     }
 
+
     if (applications.length === 0) {
 
         applicationsList.innerHTML = `
             <div class="dashboard-empty-state">
 
                 <div class="empty-icon">
-                    📄
+                    📩
                 </div>
 
                 <h3>
@@ -3609,7 +3618,7 @@ async function setupEmployerDashboard() {
                 </h3>
 
                 <p>
-                    Applications received for your jobs will appear here.
+                    Applications from candidates will appear here.
                 </p>
 
             </div>
@@ -3652,22 +3661,44 @@ async function setupEmployerDashboard() {
                             >
 
                                 <option value="Applied"
-                                    ${application.status === "Applied" ? "selected" : ""}>
+                                    ${(application.status || "Applied") === "Applied"
+                                        ? "selected"
+                                        : ""}>
                                     Applied
                                 </option>
 
                                 <option value="Under Review"
-                                    ${application.status === "Under Review" ? "selected" : ""}>
+                                    ${application.status === "Under Review"
+                                        ? "selected"
+                                        : ""}>
                                     Under Review
                                 </option>
 
                                 <option value="Shortlisted"
-                                    ${application.status === "Shortlisted" ? "selected" : ""}>
+                                    ${application.status === "Shortlisted"
+                                        ? "selected"
+                                        : ""}>
                                     Shortlisted
                                 </option>
 
+                                <option value="Interview"
+                                    ${application.status === "Interview"
+                                        ? "selected"
+                                        : ""}>
+                                    Interview
+                                </option>
+
+                                <option value="Selected"
+                                    ${application.status === "Selected"
+                                        ? "selected"
+                                        : ""}>
+                                    Selected
+                                </option>
+
                                 <option value="Rejected"
-                                    ${application.status === "Rejected" ? "selected" : ""}>
+                                    ${application.status === "Rejected"
+                                        ? "selected"
+                                        : ""}>
                                     Rejected
                                 </option>
 
@@ -3683,7 +3714,9 @@ async function setupEmployerDashboard() {
 
 
     document
-        .querySelectorAll(".application-status-select")
+        .querySelectorAll(
+            ".application-status-select"
+        )
         .forEach(function (select) {
 
             select.addEventListener(
@@ -3699,6 +3732,188 @@ async function setupEmployerDashboard() {
             );
 
         });
+
+}
+
+/* =========================
+   CLOSE JOB
+========================= */
+
+function closeEmployerJob(index) {
+
+    const postedJobs =
+        JSON.parse(localStorage.getItem("jobnestPostedJobs")) || [];
+
+    if (!postedJobs[index]) return;
+
+    const confirmClose = confirm(
+        "Are you sure you want to close this job?"
+    );
+
+    if (!confirmClose) return;
+
+    postedJobs[index].status = "Closed";
+
+    localStorage.setItem(
+        "jobnestPostedJobs",
+        JSON.stringify(postedJobs)
+    );
+
+    setupEmployerDashboard();
+}
+
+
+/* =========================
+   EDIT EMPLOYER JOB
+========================= */
+
+function editEmployerJob(index) {
+
+    const postedJobs =
+        JSON.parse(localStorage.getItem("jobnestPostedJobs")) || [];
+
+    if (!postedJobs[index]) return;
+
+    localStorage.setItem(
+        "jobnestEditJob",
+        JSON.stringify({
+            index: index,
+            job: postedJobs[index]
+        })
+    );
+
+    window.location.href = "post-job.html";
+}
+
+
+/* =====================================
+   JOBNEST EDIT JOB - LOAD EXISTING DATA
+===================================== */
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const postJobForm =
+        document.getElementById("post-job-form");
+
+    if (!postJobForm) return;
+
+    const editData =
+        JSON.parse(
+            localStorage.getItem("jobnestEditJob") || "null"
+        );
+
+    if (!editData || !editData.job) return;
+
+    const job = editData.job;
+
+    const fields = [
+        "title",
+        "company",
+        "category",
+        "location",
+        "type",
+        "mode",
+        "salary",
+        "description",
+        "responsibilities",
+        "requirements",
+        "email"
+    ];
+
+    fields.forEach(function (field) {
+
+        const input =
+            postJobForm.querySelector(`[name="${field}"]`);
+
+        if (input) {
+            input.value = job[field] || "";
+        }
+
+    });
+
+});
+
+
+/* =========================
+   DELETE JOB
+========================= */
+
+function deleteEmployerJob(index) {
+
+    const postedJobs =
+        JSON.parse(localStorage.getItem("jobnestPostedJobs")) || [];
+
+    if (!postedJobs[index]) return;
+
+    const confirmDelete = confirm(
+        "Are you sure you want to permanently delete this job?"
+    );
+
+    if (!confirmDelete) return;
+
+    postedJobs.splice(index, 1);
+
+    localStorage.setItem(
+        "jobnestPostedJobs",
+        JSON.stringify(postedJobs)
+    );
+
+    setupEmployerDashboard();
+}
+
+/* =========================
+   UPDATE EMPLOYER APPLICATION STATUS
+========================= */
+
+async function updateEmployerApplicationStatus(
+    selectElement,
+    applicationId
+) {
+
+    const newStatus =
+        selectElement.value;
+
+    try {
+
+        await updateDoc(
+            doc(
+                db,
+                "applications",
+                applicationId
+            ),
+            {
+                status: newStatus,
+                updatedAt: new Date().toISOString()
+            }
+        );
+
+        const statusElement =
+            selectElement
+                .parentElement
+                .querySelector(".tracker-status");
+
+        if (statusElement) {
+            statusElement.textContent =
+                newStatus;
+        }
+
+        console.log(
+            "Application status updated:",
+            newStatus
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Error updating application status:",
+            error
+        );
+
+        alert(
+            "Unable to update application status."
+        );
+
+    }
 
 }
 
