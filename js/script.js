@@ -4291,7 +4291,29 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
     }
 
-    const dynamicJobs = postedJobs.map(function (job) {
+    const seenHomeJobs = new Set();
+
+    const uniquePostedJobs = postedJobs.filter(function (job) {
+        const key = [
+            job.title,
+            job.company,
+            job.location,
+            job.type,
+            job.category,
+            job.salary
+        ].map(function (value) {
+            return String(value || "").trim().toLowerCase();
+        }).join("|");
+
+        if (seenHomeJobs.has(key)) {
+            return false;
+        }
+
+        seenHomeJobs.add(key);
+        return true;
+    });
+
+    const dynamicJobs = uniquePostedJobs.map(function (job) {
 
         const companyName =
             job.company || "Company";
