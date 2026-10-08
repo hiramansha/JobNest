@@ -1,3 +1,22 @@
+import {
+    onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
+
+import {
+    collection,
+    addDoc,
+    doc,
+    getDoc,
+    getDocs,
+    updateDoc,
+    deleteDoc
+} from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
+
+import {
+    auth,
+    db
+} from "./firebase-config.js";
+
 /* =========================================
    JOBNEST - MAIN JAVASCRIPT
 ========================================= */
