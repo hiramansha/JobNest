@@ -1332,6 +1332,8 @@ const job = jobSnapshot.exists()
             }
         );
     }
+
+}
 /* =====================================================
    START JOB DETAILS
 ===================================================== */
@@ -4142,4 +4144,3 @@ document.addEventListener("DOMContentLoaded", function () {
 document.addEventListener("DOMContentLoaded", function () {
     setupApplyButton();
 });
-}
