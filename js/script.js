@@ -3379,182 +3379,257 @@ document.addEventListener(
    JOBNEST EMPLOYER DASHBOARD
 ========================================= */
 
-function setupEmployerDashboard() {
+async function setupEmployerDashboard() {
 
-    const jobsList = document.getElementById("employer-jobs-list");
+    const jobsList =
+        document.getElementById("employer-jobs-list");
 
-    if (!jobsList) return;
+    if (!jobsList) {
+        return;
+    }
+
+    const user = auth.currentUser;
+
+    if (!user) {
+        return;
+    }
 
     const postedJobs =
-        JSON.parse(localStorage.getItem("jobnestPostedJobs")) || [];
+        JSON.parse(
+            localStorage.getItem("jobnestPostedJobs")
+        ) || [];
 
-    const applications =
-        JSON.parse(localStorage.getItem("jobnestApplications")) || [];
+    let applications = [];
+
+    try {
+
+        const snapshot =
+            await getDocs(
+                collection(db, "applications")
+            );
+
+        applications =
+            snapshot.docs
+                .map(function (applicationDoc) {
+                    return {
+                        id: applicationDoc.id,
+                        ...applicationDoc.data()
+                    };
+                })
+                .filter(function (application) {
+                    return application.employerId === user.uid;
+                });
+
+    } catch (error) {
+
+        console.error(
+            "Error loading employer applications:",
+            error
+        );
+
+    }
 
 
     /* =========================
        STATISTICS
     ========================== */
 
-    const totalJobs = postedJobs.length;
+    const totalJobs =
+        postedJobs.length;
 
-    const activeJobs = postedJobs.filter(job =>
-        job.status !== "Closed"
-    ).length;
+    const activeJobs =
+        postedJobs.filter(function (job) {
+            return job.status !== "Closed";
+        }).length;
 
-    const totalApplications = applications.length;
+    const totalApplications =
+        applications.length;
 
-    const shortlisted = applications.filter(application =>
-        application.status === "Shortlisted"
-    ).length;
+    const shortlisted =
+        applications.filter(function (application) {
+            return application.status === "Shortlisted";
+        }).length;
 
 
     const totalJobsElement =
-        document.getElementById("employer-total-jobs");
+        document.getElementById(
+            "employer-total-jobs"
+        );
 
     const activeJobsElement =
-        document.getElementById("employer-active-jobs");
+        document.getElementById(
+            "employer-active-jobs"
+        );
 
     const applicationsElement =
-        document.getElementById("employer-total-applications");
+        document.getElementById(
+            "employer-total-applications"
+        );
 
     const shortlistedElement =
-        document.getElementById("employer-shortlisted");
+        document.getElementById(
+            "employer-shortlisted"
+        );
 
 
-    if (totalJobsElement)
-        totalJobsElement.textContent = totalJobs;
+    if (totalJobsElement) {
+        totalJobsElement.textContent =
+            totalJobs;
+    }
 
-    if (activeJobsElement)
-        activeJobsElement.textContent = activeJobs;
+    if (activeJobsElement) {
+        activeJobsElement.textContent =
+            activeJobs;
+    }
 
-    if (applicationsElement)
-        applicationsElement.textContent = totalApplications;
+    if (applicationsElement) {
+        applicationsElement.textContent =
+            totalApplications;
+    }
 
-    if (shortlistedElement)
-        shortlistedElement.textContent = shortlisted;
+    if (shortlistedElement) {
+        shortlistedElement.textContent =
+            shortlisted;
+    }
 
 
     /* =========================
-   POSTED JOBS
-========================= */
+       POSTED JOBS
+    ========================== */
 
-if (postedJobs.length === 0) {
+    if (postedJobs.length === 0) {
 
-    jobsList.innerHTML = `
-        <div class="dashboard-empty-state">
-
-            <div class="empty-icon">
-                💼
-            </div>
-
-            <h3>
-                No jobs posted yet
-            </h3>
-
-            <p>
-                Start hiring by posting your first job opportunity.
-            </p>
-
-            <a href="post-job.html" class="btn btn-primary">
-                Post Your First Job
-            </a>
-
-        </div>
-    `;
-
-} else {
-
-    jobsList.innerHTML = postedJobs
-        .map(function (job, index) {
-
-            return `
-                <div class="dashboard-job-card">
-
-                    <div>
-
-                        <span class="job-status">
-                            ${job.status || "Active"}
-                        </span>
-
-                        <h3>
-                            ${job.title || "Job Position"}
-                        </h3>
-
-                        <p>
-                            ${job.company || "Company"}
-                            ${job.location ? " • " + job.location : ""}
-                        </p>
-
-                    </div>
-
-                    <div class="dashboard-job-actions">
-
-                        <a 
-    href="job-details.html?id=${job.id}" 
-    class="btn btn-outline" 
->
-    View 
-</a>
-
-                        <button
-                            class="btn btn-primary"
-                            onclick="editEmployerJob(${index})"
-                        >
-                            Edit Job
-                        </button>
-
-                        <button
-                            class="btn btn-danger"
-                            onclick="closeEmployerJob(${index})"
-                        >
-                            Close Job
-                        </button>
-
-                        <button
-                            class="btn btn-danger"
-                            onclick="deleteEmployerJob(${index})"
-                        >
-                            Delete Job
-                        </button>
-
-                    </div>
-
-                </div>
-            `;
-
-        })
-        .join("");
-
-}
-}
-
-/* =========================
-   APPLICATIONS
-========================= */
-
-const applicationsList =
-    document.getElementById("employer-applications-list");
-
-if (applicationsList) {
-
-    if (applications.length === 0) {
-
-        applicationsList.innerHTML = `
+        jobsList.innerHTML = `
             <div class="dashboard-empty-state">
-                <div class="empty-icon">📩</div>
 
-                <h3>No applications yet</h3>
+                <div class="empty-icon">
+                    💼
+                </div>
+
+                <h3>
+                    No jobs posted yet
+                </h3>
 
                 <p>
-                    Applications from candidates will appear here.
+                    Start hiring by posting your first job opportunity.
                 </p>
+
+                <a href="post-job.html" class="btn btn-primary">
+                    Post Your First Job
+                </a>
+
             </div>
         `;
 
     } else {
 
-        applicationsList.innerHTML = applications
+        jobsList.innerHTML =
+            postedJobs
+                .map(function (job, index) {
+
+                    return `
+                        <div class="dashboard-job-card">
+
+                            <div>
+
+                                <span class="job-status">
+                                    ${job.status || "Active"}
+                                </span>
+
+                                <h3>
+                                    ${job.title || "Job Position"}
+                                </h3>
+
+                                <p>
+                                    ${job.company || "Company"}
+                                    ${job.location
+                                        ? " • " + job.location
+                                        : ""}
+                                </p>
+
+                            </div>
+
+                            <div class="dashboard-job-actions">
+
+                                <a
+                                    href="job-details.html?id=${job.id}"
+                                    class="btn btn-outline"
+                                >
+                                    View
+                                </a>
+
+                                <button
+                                    class="btn btn-primary"
+                                    onclick="editEmployerJob(${index})"
+                                >
+                                    Edit Job
+                                </button>
+
+                                <button
+                                    class="btn btn-danger"
+                                    onclick="closeEmployerJob(${index})"
+                                >
+                                    Close Job
+                                </button>
+
+                                <button
+                                    class="btn btn-danger"
+                                    onclick="deleteEmployerJob(${index})"
+                                >
+                                    Delete Job
+                                </button>
+
+                            </div>
+
+                        </div>
+                    `;
+
+                })
+                .join("");
+
+    }
+
+
+    /* =========================
+       APPLICATIONS
+    ========================== */
+
+    const applicationsList =
+        document.getElementById(
+            "employer-applications-list"
+        );
+
+    if (!applicationsList) {
+        return;
+    }
+
+
+    if (applications.length === 0) {
+
+        applicationsList.innerHTML = `
+            <div class="dashboard-empty-state">
+
+                <div class="empty-icon">
+                    📩
+                </div>
+
+                <h3>
+                    No applications yet
+                </h3>
+
+                <p>
+                    Applications from candidates will appear here.
+                </p>
+
+            </div>
+        `;
+
+        return;
+    }
+
+
+    applicationsList.innerHTML =
+        applications
             .slice(0, 5)
             .map(function (application) {
 
@@ -3562,82 +3637,103 @@ if (applicationsList) {
                     <div class="dashboard-application-card">
 
                         <div>
+
                             <h3>
-                                ${application.name || "Candidate"}
+                                ${application.applicantEmail || "Candidate"}
                             </h3>
 
                             <p>
                                 Applied for:
-                                ${application.title || "Job Position"}
+                                ${application.jobTitle || "Job Position"}
                             </p>
+
                         </div>
-<div>
-    <span class="tracker-status">
-        ${application.status || "Applied"}
-    </span>
 
-    <select
-        class="application-status-select"
-        onchange="updateEmployerApplicationStatus(this, '${application.id || ""}')"
-    >
-        <option value="Applied" ${
-            (application.status || "Applied") === "Applied"
-                ? "selected"
-                : ""
-        }>
-            Applied
-        </option>
+                        <div>
 
-        <option value="Under Review" ${
-            application.status === "Under Review"
-                ? "selected"
-                : ""
-        }>
-            Under Review
-        </option>
+                            <span class="tracker-status">
+                                ${application.status || "Applied"}
+                            </span>
 
-        <option value="Shortlisted" ${
-            application.status === "Shortlisted"
-                ? "selected"
-                : ""
-        }>
-            Shortlisted
-        </option>
+                            <select
+                                class="application-status-select"
+                                data-application-id="${application.id}"
+                            >
 
-        <option value="Interview" ${
-            application.status === "Interview"
-                ? "selected"
-                : ""
-        }>
-            Interview
-        </option>
+                                <option value="Applied"
+                                    ${(application.status || "Applied") === "Applied"
+                                        ? "selected"
+                                        : ""}>
+                                    Applied
+                                </option>
 
-        <option value="Selected" ${
-            application.status === "Selected"
-                ? "selected"
-                : ""
-        }>
-            Selected
-        </option>
+                                <option value="Under Review"
+                                    ${application.status === "Under Review"
+                                        ? "selected"
+                                        : ""}>
+                                    Under Review
+                                </option>
 
-        <option value="Rejected" ${
-            application.status === "Rejected"
-                ? "selected"
-                : ""
-        }>
-            Rejected
-        </option>
-    </select>
-</div>
+                                <option value="Shortlisted"
+                                    ${application.status === "Shortlisted"
+                                        ? "selected"
+                                        : ""}>
+                                    Shortlisted
+                                </option>
+
+                                <option value="Interview"
+                                    ${application.status === "Interview"
+                                        ? "selected"
+                                        : ""}>
+                                    Interview
+                                </option>
+
+                                <option value="Selected"
+                                    ${application.status === "Selected"
+                                        ? "selected"
+                                        : ""}>
+                                    Selected
+                                </option>
+
+                                <option value="Rejected"
+                                    ${application.status === "Rejected"
+                                        ? "selected"
+                                        : ""}>
+                                    Rejected
+                                </option>
+
+                            </select>
+
+                        </div>
 
                     </div>
                 `;
 
             })
             .join("");
-    }
-}
 
+
+    document
+        .querySelectorAll(
+            ".application-status-select"
+        )
+        .forEach(function (select) {
+
+            select.addEventListener(
+                "change",
+                function () {
+
+                    updateEmployerApplicationStatus(
+                        select,
+                        select.dataset.applicationId
+                    );
+
+                }
+            );
+
+        });
+
+}
 
 /* =========================
    CLOSE JOB
@@ -3769,26 +3865,58 @@ function deleteEmployerJob(index) {
    UPDATE EMPLOYER APPLICATION STATUS
 ========================= */
 
-function updateEmployerApplicationStatus(selectElement, applicationId) {
+async function updateEmployerApplicationStatus(
+    selectElement,
+    applicationId
+) {
 
-    const applications =
-        JSON.parse(localStorage.getItem("jobnestApplications")) || [];
+    const newStatus =
+        selectElement.value;
 
-    const applicationIndex = applications.findIndex(
-        application => String(application.id || "") === String(applicationId)
-    );
+    try {
 
-    if (applicationIndex === -1) return;
+        await updateDoc(
+            doc(
+                db,
+                "applications",
+                applicationId
+            ),
+            {
+                status: newStatus,
+                updatedAt: new Date().toISOString()
+            }
+        );
 
-    applications[applicationIndex].status = selectElement.value;
+        const statusElement =
+            selectElement
+                .parentElement
+                .querySelector(".tracker-status");
 
-    localStorage.setItem(
-        "jobnestApplications",
-        JSON.stringify(applications)
-    );
+        if (statusElement) {
+            statusElement.textContent =
+                newStatus;
+        }
 
-    setupEmployerDashboard();
+        console.log(
+            "Application status updated:",
+            newStatus
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Error updating application status:",
+            error
+        );
+
+        alert(
+            "Unable to update application status."
+        );
+
+    }
+
 }
+
 /* =========================
    INITIALIZE DASHBOARD
 ========================= */
