@@ -868,7 +868,9 @@ filterJobs();
 
         }
 
-        loadFirestoreJobs();
+        if (document.getElementById("jobs-list")) {
+    loadFirestoreJobs();
+}
 
 
         /* =========================================
