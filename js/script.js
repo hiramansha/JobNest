@@ -719,6 +719,8 @@ filterJobs();
                 const snapshot =
                     await getDocs(collection(db, "jobs"));
 
+                const seenJobs = new Set();
+
                 snapshot.forEach((docSnapshot) => {
 
                     const job =
@@ -727,6 +729,26 @@ filterJobs();
                     if (job.status === "Closed") {
                         return;
                     }
+
+                    const jobKey = [
+                        job.title,
+                        job.company,
+                        job.location,
+                        job.type,
+                        job.mode,
+                        job.category,
+                        job.salary
+                    ]
+                        .map(value =>
+                            String(value || "").trim().toLowerCase()
+                        )
+                        .join("|");
+
+                    if (seenJobs.has(jobKey)) {
+                        return;
+                    }
+
+                    seenJobs.add(jobKey);
 
                     const companyName =
                         job.company || "Company";
@@ -3162,117 +3184,123 @@ document.addEventListener("DOMContentLoaded", function () {
    JOBNEST APPLICATION TRACKING SYSTEM
 ========================================= */
 
-function setupApplicationTracker() {
-    const tracker = document.getElementById("application-tracker");
+async function setupApplicationTracker() {
+
+    const tracker =
+        document.getElementById("application-tracker");
 
     if (!tracker) return;
 
-    const applications =
-        JSON.parse(localStorage.getItem("jobnestApplications")) || [];
+    const user = auth.currentUser;
 
-    if (applications.length === 0) {
-        tracker.innerHTML = `
-            <div class="tracker-card">
-                <h3>No applications yet</h3>
-                <p>
-                    Apply for a job to start tracking your application journey.
-                </p>
-            </div>
-        `;
-        return;
-    }
+    if (!user) return;
 
-   const stages = [
-    "Applied",
-    "Under Review",
-    "Shortlisted",
-    "Interview",
-    "Selected",
-    "Rejected"
-];
+    try {
 
-    tracker.innerHTML = applications.map((application, index) => {
+        const snapshot =
+            await getDocs(collection(db, "applications"));
 
-        const currentStage = application.status || "Applied";
+        const applications =
+            snapshot.docs
+                .map(function (applicationDoc) {
+                    return {
+                        id: applicationDoc.id,
+                        ...applicationDoc.data()
+                    };
+                })
+                .filter(function (application) {
+                    return application.userId === user.uid;
+                })
+                .sort(function (a, b) {
+                    return new Date(b.appliedAt || 0) -
+                           new Date(a.appliedAt || 0);
+                });
 
-        let currentIndex = stages.indexOf(currentStage);
-
-        if (currentIndex === -1) {
-            currentIndex = 0;
+        if (applications.length === 0) {
+            tracker.innerHTML = `
+                <div class="tracker-card">
+                    <h3>No applications yet</h3>
+                    <p>
+                        Apply for a job to start tracking your application journey.
+                    </p>
+                </div>
+            `;
+            return;
         }
 
-    const progressStages = [
-    "Applied",
-    "Under Review",
-    "Shortlisted",
-    "Interview",
-    "Selected",
-    "Rejected"
-];
+        const stages = [
+            "Applied",
+            "Under Review",
+            "Shortlisted",
+            "Interview",
+            "Selected",
+            "Rejected"
+        ];
 
-        const steps = progressStages.map((stage, stageIndex) => `
-            <div class="tracker-step ${
-                stageIndex <= progressStages.indexOf(currentStage)
-                    ? "completed"
-                    : ""
-            }">
-                <span>${stageIndex + 1}</span>
-                ${stage}
-            </div>
-        `).join("");
+        tracker.innerHTML = applications.map(function (application) {
 
-        return `
-            <div class="tracker-card">
+            const currentStage =
+                application.status || "Applied";
 
-                <h3>
-                    ${application.title || "Job Application"}
-                </h3>
+            const currentIndex =
+                stages.indexOf(currentStage);
 
-                <p>
-                    ${application.company || "Company"}
-                    ${application.location ? " • " + application.location : ""}
-                </p>
+            const steps = stages.map(function (stage, stageIndex) {
 
-                <span class="tracker-status ${
-                    currentStage === "Rejected"
-                        ? "tracker-rejected"
-                        : ""
-                }">
-                    Current Status: ${currentStage}
-                </span>
+                return `
+                    <div class="tracker-step ${
+                        stageIndex <=
+                        (currentIndex === -1 ? 0 : currentIndex)
+                            ? "completed"
+                            : ""
+                    }">
+                        <span>${stageIndex + 1}</span>
+                        ${stage}
+                    </div>
+                `;
 
-                <div class="tracker-progress">
-                    ${steps}
-                </div>
+            }).join("");
 
-                <div class="tracker-update">
+            return `
+                <div class="tracker-card">
 
-                    <label for="status-${index}">
-                        Update Application Status
-                    </label>
+                    <h3>
+                        ${application.jobTitle || "Job Application"}
+                    </h3>
 
-                    <select
-                        id="status-${index}"
-                        onchange="updateApplicationStatus(${index}, this.value)"
-                    >
+                    <p>
+                        ${application.company || "Company"}
+                        ${
+                            application.location
+                                ? " • " + application.location
+                                : ""
+                        }
+                    </p>
 
-                        ${stages.map(stage => `
-                            <option
-                                value="${stage}"
-                                ${stage === currentStage ? "selected" : ""}
-                            >
-                                ${stage}
-                            </option>
-                        `).join("")}
+                    <span class="tracker-status ${
+                        currentStage === "Rejected"
+                            ? "tracker-rejected"
+                            : ""
+                    }">
+                        Current Status: ${currentStage}
+                    </span>
 
-                    </select>
+                    <div class="tracker-progress">
+                        ${steps}
+                    </div>
 
                 </div>
+            `;
 
-            </div>
-        `;
+        }).join("");
 
-    }).join("");
+    } catch (error) {
+
+        console.error(
+            "Error loading application tracker:",
+            error
+        );
+    }
 }
 
 
@@ -3280,26 +3308,32 @@ function setupApplicationTracker() {
    UPDATE APPLICATION STATUS
 ========================================= */
 
-function updateApplicationStatus(index, newStatus) {
+async function updateApplicationStatus(
+    applicationId,
+    newStatus
+) {
 
-    const applications =
-        JSON.parse(localStorage.getItem("jobnestApplications")) || [];
+    try {
 
-    if (!applications[index]) return;
+        await updateDoc(
+            doc(db, "applications", applicationId),
+            {
+                status: newStatus,
+                updatedAt: new Date().toISOString()
+            }
+        );
 
-    applications[index].status = newStatus;
+        await setupApplicationTracker();
+        await loadApplications();
 
-    localStorage.setItem(
-        "jobnestApplications",
-        JSON.stringify(applications)
-    );
+    } catch (error) {
 
-    setupApplicationTracker();
+        console.error(
+            "Error updating application status:",
+            error
+        );
 
-    updateApplicationStats();
-
-    if (typeof setupApplicationsPage === "function") {
-        setupApplicationsPage();
+        alert("Unable to update application status.");
     }
 }
 
