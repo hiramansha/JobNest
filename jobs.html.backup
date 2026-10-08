@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Find Jobs | JobNest</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<!-- ================= NAVBAR ================= -->
+
+<header class="navbar">
+    <div class="nav-container">
+
+        <a href="index.html" class="logo">
+            JobNest<span>.</span>
+        </a>
+
+        <nav class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="jobs.html" class="active">Find Jobs</a>
+            <a href="companies.html">Companies</a>
+            <a href="resources.html">Career Resources</a>
+            <a href="post-job.html" class="nav-post-job">Post a Job</a>
+            <a href="profile.html">My Profile</a>
+        </nav>
+
+        <div class="nav-actions">
+            <a href="login.html" class="nav-login">Sign In</a>
+            <a href="register.html" class="nav-register">Register</a>
+        </div>
+
+    </div>
+</header>
+
+
+<!-- ================= PAGE HEADER ================= -->
+
+<section class="jobs-page-header">
+
+    <div class="jobs-header-content">
+
+        <span class="section-label">FIND YOUR NEXT OPPORTUNITY</span>
+
+        <h1>Find a job that feels right.</h1>
+
+        <p>
+            Explore opportunities from companies looking for talented
+            people like you.
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- ================= SEARCH AREA ================= -->
+
+<section class="jobs-search-wrapper">
+
+    <div class="jobs-search-box">
+
+        <div class="search-field">
+
+            <label for="job-search">Job title or keyword</label>
+
+            <input
+                type="text"
+                id="job-search"
+                placeholder="e.g. Frontend Developer"
+            >
+
+        </div>
+
+
+        <div class="search-field">
+
+            <label for="location-search">Location</label>
+
+            <select id="location-search">
+
+                <option value="">All locations</option>
+                <option value="Lahore">Lahore</option>
+                <option value="Karachi">Karachi</option>
+                <option value="Islamabad">Islamabad</option>
+                <option value="Remote">Remote</option>
+
+            </select>
+
+        </div>
+
+
+        <button type="button" id="search-jobs-btn" class="search-jobs-btn">
+            Search Jobs
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- ================= MAIN JOB AREA ================= -->
+
+<main class="jobs-main">
+
+    <div class="jobs-main-container">
+
+
+        <!-- ================= FILTER SIDEBAR ================= -->
+
+        <aside class="jobs-filter-sidebar">
+
+            <div class="filter-header">
+
+                <h3>Filter Jobs</h3>
+
+                <button type="button" id="clear-filters">
+                    Clear all
+                </button>
+
+            </div>
+
+
+            <!-- Category -->
+
+            <div class="filter-group">
+
+                <h4>Job Category</h4>
+
+                <label class="filter-option">
+                    <input type="checkbox" value="IT" class="category-filter">
+                    <span>Technology</span>
+                </label>
+
+                <label class="filter-option">
+                    <input type="checkbox" value="Marketing" class="category-filter">
+                    <span>Marketing</span>
+                </label>
+
+                <label class="filter-option">
+                    <input type="checkbox" value="Design" class="category-filter">
+                    <span>Design</span>
+                </label>
+
+                <label class="filter-option">
+                    <input type="checkbox" value="Finance" class="category-filter">
+                    <span>Finance</span>
+                </label>
+
+                <label class="filter-option">
+                    <input type="checkbox" value="Education" class="category-filter">
+                    <span>Education</span>
+                </label>
+
+            </div>
+
+
+            <!-- Job Type -->
+
+            <div class="filter-group">
+
+                <h4>Job Type</h4>
+
+                <label class="filter-option">
+                    <input type="checkbox" value="Full-time" class="type-filter">
+                    <span>Full-time</span>
+                </label>
+
+                <label class="filter-option">
+                    <input type="checkbox" value="Part-time" class="type-filter">
+                    <span>Part-time</span>
+                </label>
+
+                <label class="filter-option">
+                    <input type="checkbox" value="Contract" class="type-filter">
+                    <span>Contract</span>
+                </label>
+
+            </div>
+
+
+            <!-- Work Mode -->
+
+            <div class="filter-group">
+
+                <h4>Work Mode</h4>
+
+                <label class="filter-option">
+                    <input type="checkbox" value="Remote" class="mode-filter">
+                    <span>Remote</span>
+                </label>
+
+                <label class="filter-option">
+                    <input type="checkbox" value="Hybrid" class="mode-filter">
+                    <span>Hybrid</span>
+                </label>
+
+                <label class="filter-option">
+                    <input type="checkbox" value="On-site" class="mode-filter">
+                    <span>On-site</span>
+                </label>
+
+            </div>
+
+        </aside>
+
+
+        <!-- ================= JOB LIST ================= -->
+
+        <section class="jobs-results">
+
+            <div class="jobs-results-top">
+
+                <div>
+                    <h2>Available Jobs</h2>
+                    <p id="jobs-count">6 opportunities found</p>
+                </div>
+
+                <div class="sort-area">
+
+                    <label for="sort-jobs">Sort by</label>
+
+                    <select id="sort-jobs">
+
+                        <option value="latest">Latest</option>
+                        <option value="salary-high">Salary: High to Low</option>
+                        <option value="salary-low">Salary: Low to High</option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================= JOB CARDS ================= -->
+
+            <div class="jobs-list" id="jobs-list">
+
+
+                <!-- JOB 1 -->
+
+                <article
+                    class="job-list-card"
+                    data-category="IT"
+                    data-type="Full-time"
+                    data-mode="On-site"
+                    data-location="Lahore"
+                    data-title="Frontend Developer"
+                    data-salary="250000"
+                >
+
+                    <div class="job-list-image">
+
+                        <img
+                            src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=900&q=80"
+                            alt="Frontend developer working"
+                        >
+
+                    </div>
+
+
+                    <div class="job-list-content">
+
+                        <div class="job-list-top">
+
+                            <div class="company-logo-small">
+                                TE
+                            </div>
+
+                            <button
+                                type="button"
+                                class="save-job-btn"
+                                data-job="Frontend Developer"
+                            >
+                                Save
+                            </button>
+
+                        </div>
+
+
+                        <h3>Frontend Developer</h3>
+
+                        <p class="job-company">
+                            TechNova
+                        </p>
+
+
+                        <div class="job-details-row">
+
+                            <span>Full-time</span>
+                            <span>Lahore</span>
+                            <span>IT</span>
+
+                        </div>
+
+
+                        <div class="job-card-bottom">
+
+                            <strong>
+                                PKR 150k – 250k / month
+                            </strong>
+
+                            <a href="job-details.html?job=frontend-developer">
+                                View Job →
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </article>
+
+
+                <!-- JOB 2 -->
+
+                <article
+                    class="job-list-card"
+                    data-category="IT"
+                    data-type="Full-time"
+                    data-mode="Remote"
+                    data-location="Remote"
+                    data-title="Backend Engineer"
+                    data-salary="400000"
+                >
+
+                    <div class="job-list-image">
+
+                        <img
+                            src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=900&q=80"
+                            alt="Backend developer working"
+                        >
+
+                    </div>
+
+
+                    <div class="job-list-content">
+
+                        <div class="job-list-top">
+
+                            <div class="company-logo-small">
+                                TE
+                            </div>
+
+                            <button
+                                type="button"
+                                class="save-job-btn"
+                                data-job="Backend Engineer"
+                            >
+                                Save
+                            </button>
+
+                        </div>
+
+
+                        <h3>Backend Engineer</h3>
+
+                        <p class="job-company">
+                            TechNova
+                        </p>
+
+
+                        <div class="job-details-row">
+
+                            <span>Full-time</span>
+                            <span>Remote</span>
+                            <span>IT</span>
+
+                        </div>
+
+
+                        <div class="job-card-bottom">
+
+                            <strong>
+                                PKR 250k – 400k / month
+                            </strong>
+
+                            <a href="job-details.html?job=backend-engineer">
+                                View Job →
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </article>
+
+
+                <!-- JOB 3 -->
+
+                <article
+                    class="job-list-card"
+                    data-category="Marketing"
+                    data-type="Full-time"
+                    data-mode="On-site"
+                    data-location="Karachi"
+                    data-title="Digital Marketing Executive"
+                    data-salary="120000"
+                >
+
+                    <div class="job-list-image">
+
+                        <img
+                            src="https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=900&q=80"
+                            alt="Marketing team working"
+                        >
+
+                    </div>
+
+
+                    <div class="job-list-content">
+
+                        <div class="job-list-top">
+
+                            <div class="company-logo-small">
+                                BR
+                            </div>
+
+                            <button
+                                type="button"
+                                class="save-job-btn"
+                                data-job="Digital Marketing Executive"
+                            >
+                                Save
+                            </button>
+
+                        </div>
+
+
+                        <h3>Digital Marketing Executive</h3>
+
+                        <p class="job-company">
+                            BrightEdge Media
+                        </p>
+
+
+                        <div class="job-details-row">
+
+                            <span>Full-time</span>
+                            <span>Karachi</span>
+                            <span>Marketing</span>
+
+                        </div>
+
+
+                        <div class="job-card-bottom">
+
+                            <strong>
+                                PKR 80k – 120k / month
+                            </strong>
+
+                            <a href="job-details.html?job=digital-marketing">
+                                View Job →
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </article>
+
+
+                <!-- JOB 4 -->
+
+                <article
+                    class="job-list-card"
+                    data-category="Design"
+                    data-type="Full-time"
+                    data-mode="On-site"
+                    data-location="Islamabad"
+                    data-title="UI UX Designer"
+                    data-salary="200000"
+                >
+
+                    <div class="job-list-image">
+
+                        <img
+                            src="https://images.unsplash.com/photo-1561070791-2526d30994b5?auto=format&fit=crop&w=900&q=80"
+                            alt="UI UX designer workspace"
+                        >
+
+                    </div>
+
+
+                    <div class="job-list-content">
+
+                        <div class="job-list-top">
+
+                            <div class="company-logo-small">
+                                PI
+                            </div>
+
+                            <button
+                                type="button"
+                                class="save-job-btn"
+                                data-job="UI UX Designer"
+                            >
+                                Save
+                            </button>
+
+                        </div>
+
+
+                        <h3>UI/UX Designer</h3>
+
+                        <p class="job-company">
+                            PixelCraft Studio
+                        </p>
+
+
+                        <div class="job-details-row">
+
+                            <span>Full-time</span>
+                            <span>Islamabad</span>
+                            <span>Design</span>
+
+                        </div>
+
+
+                        <div class="job-card-bottom">
+
+                            <strong>
+                                PKR 120k – 200k / month
+                            </strong>
+
+                            <a href="job-details.html?job=ui-ux-designer">
+                                View Job →
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </article>
+
+
+                <!-- JOB 5 -->
+
+                <article
+                    class="job-list-card"
+                    data-category="Finance"
+                    data-type="Full-time"
+                    data-mode="On-site"
+                    data-location="Lahore"
+                    data-title="Financial Analyst"
+                    data-salary="190000"
+                >
+
+                    <div class="job-list-image">
+
+                        <img
+                            src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=900&q=80"
+                            alt="Financial analyst working"
+                        >
+
+                    </div>
+
+
+                    <div class="job-list-content">
+
+                        <div class="job-list-top">
+
+                            <div class="company-logo-small">
+                                FI
+                            </div>
+
+                            <button
+                                type="button"
+                                class="save-job-btn"
+                                data-job="Financial Analyst"
+                            >
+                                Save
+                            </button>
+
+                        </div>
+
+
+                        <h3>Financial Analyst</h3>
+
+                        <p class="job-company">
+                            FinTrust Bank
+                        </p>
+
+
+                        <div class="job-details-row">
+
+                            <span>Full-time</span>
+                            <span>Lahore</span>
+                            <span>Finance</span>
+
+                        </div>
+
+
+                        <div class="job-card-bottom">
+
+                            <strong>
+                                PKR 130k – 190k / month
+                            </strong>
+
+                            <a href="job-details.html?job=financial-analyst">
+                                View Job →
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </article>
+
+
+                <!-- JOB 6 -->
+
+                <article
+                    class="job-list-card"
+                    data-category="Education"
+                    data-type="Part-time"
+                    data-mode="Remote"
+                    data-location="Remote"
+                    data-title="Online Math Tutor"
+                    data-salary="70000"
+                >
+
+                    <div class="job-list-image">
+
+                        <img
+                            src="https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=900&q=80"
+                            alt="Online teacher tutoring students"
+                        >
+
+                    </div>
+
+
+                    <div class="job-list-content">
+
+                        <div class="job-list-top">
+
+                            <div class="company-logo-small">
+                                ED
+                            </div>
+
+                            <button
+                                type="button"
+                                class="save-job-btn"
+                                data-job="Online Math Tutor"
+                            >
+                                Save
+                            </button>
+
+                        </div>
+
+
+                        <h3>Online Math Tutor</h3>
+
+                        <p class="job-company">
+                            EduSpark
+                        </p>
+
+
+                        <div class="job-details-row">
+
+                            <span>Part-time</span>
+                            <span>Remote</span>
+                            <span>Education</span>
+
+                        </div>
+
+
+                        <div class="job-card-bottom">
+
+                            <strong>
+                                PKR 40k – 70k / month
+                            </strong>
+
+                            <a href="job-details.html?job=online-math-tutor">
+                                View Job →
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </article>
+
+
+            </div>
+
+
+            <!-- ================= NO RESULTS ================= -->
+
+            <div class="no-jobs-message" id="no-jobs-message">
+
+                <h3>No jobs found</h3>
+
+                <p>
+                    Try changing your search or filters to find more opportunities.
+                </p>
+
+                <button type="button" id="reset-jobs">
+                    Reset Search
+                </button>
+
+            </div>
+
+        </section>
+
+    </div>
+
+</main>
+
+
+<!-- ================= FOOTER ================= -->
+
+<footer class="site-footer">
+
+    <div class="footer-container">
+
+        <div class="footer-brand">
+
+            <a href="index.html" class="footer-logo">
+                JobNest<span>.</span>
+            </a>
+
+            <p>
+                Made with care to help you find work you love.
+            </p>
+
+        </div>
+
+
+        <div class="footer-column">
+
+            <h4>Job Seekers</h4>
+
+            <a href="jobs.html">Find Jobs</a>
+            <a href="saved-jobs.html">Saved Jobs</a>
+            <a href="applications.html">My Applications</a>
+            <a href="profile.html">My Profile</a>
+
+        </div>
+
+
+        <div class="footer-column">
+
+            <h4>Employers</h4>
+
+            <a href="post-job.html">Post a Job</a>
+            <a href="companies.html">Companies</a>
+
+        </div>
+
+
+        <div class="footer-column">
+
+            <h4>JobNest</h4>
+
+            <a href="resources.html">Career Resources</a>
+            <a href="index.html">About Us</a>
+            <a href="index.html">Contact</a>
+
+        </div>
+
+    </div>
+
+
+    <div class="footer-bottom">
+
+        <p>
+            © 2026 JobNest. All Rights Reserved.
+        </p>
+
+    </div>
+
+</footer>
+<nav class="nav-links">
+
+    <a href="index.html">Home</a>
+
+    <a href="jobs.html" class="active">Find Jobs</a>
+
+    <a href="companies.html">Companies</a>
+
+    <a href="resources.html">Career Resources</a>
+
+    <a href="post-job.html">Post a Job</a>
+
+    <a href="profile.html">My Profile</a>
+
+    <a href="employer-dashboard.html">Employer Dashboard</a>
+
+    <a href="login.html">Login</a>
+
+</nav>
+<script type="module" src="js/script.js"></script>
+
+</body>
+</html>
