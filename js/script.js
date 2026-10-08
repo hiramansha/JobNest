@@ -114,7 +114,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (jobsList) {
 
-        const jobCards = Array.from(
+        let jobCards = Array.from(
             jobsList.querySelectorAll(".job-list-card")
         );
 
@@ -687,6 +687,147 @@ filterJobs();
             }
 
         }
+
+
+        /* =========================================
+           LOAD FIRESTORE JOBS
+        ========================================= */
+
+        async function loadFirestoreJobs() {
+
+            try {
+
+                const snapshot =
+                    await getDocs(collection(db, "jobs"));
+
+                snapshot.forEach((docSnapshot) => {
+
+                    const job =
+                        docSnapshot.data();
+
+                    if (job.status === "Closed") {
+                        return;
+                    }
+
+                    const companyName =
+                        job.company || "Company";
+
+                    const initials =
+                        companyName
+                            .split(" ")
+                            .map((word) => word.charAt(0))
+                            .join("")
+                            .substring(0, 2)
+                            .toUpperCase();
+
+                    const salaryText =
+                        job.salary || "Salary not specified";
+
+                    const salaryNumber =
+                        Number(
+                            (salaryText.match(/\d+/) || ["0"])[0]
+                        );
+
+                    const card =
+                        document.createElement("article");
+
+                    card.className =
+                        "job-list-card";
+
+                    card.dataset.category =
+                        job.category || "";
+
+                    card.dataset.type =
+                        job.type || "";
+
+                    card.dataset.mode =
+                        job.mode || "";
+
+                    card.dataset.location =
+                        job.location || "";
+
+                    card.dataset.title =
+                        job.title || "";
+
+                    card.dataset.salary =
+                        salaryNumber;
+
+                    card.innerHTML = `
+                        <div class="job-list-image">
+                            <img
+                                src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=900&q=80"
+                                alt="Job opportunity"
+                            >
+                        </div>
+
+                        <div class="job-list-content">
+
+                            <div class="job-list-top">
+
+                                <div class="company-logo-small">
+                                    ${initials}
+                                </div>
+
+                                <button
+                                    type="button"
+                                    class="save-job-btn"
+                                    data-job="${docSnapshot.id}"
+                                >
+                                    Save
+                                </button>
+
+                            </div>
+
+                            <h3>${job.title || "Job Position"}</h3>
+
+                            <p class="job-company">
+                                ${companyName}
+                            </p>
+
+                            <div class="job-details-row">
+                                <span>${job.type || "Not specified"}</span>
+                                <span>${job.location || "Not specified"}</span>
+                                <span>${job.category || "General"}</span>
+                            </div>
+
+                            <div class="job-card-bottom">
+
+                                <strong>
+                                    ${salaryText}
+                                </strong>
+
+                                <a href="job-details.html?id=${docSnapshot.id}">
+                                    View Job →
+                                </a>
+
+                            </div>
+
+                        </div>
+                    `;
+
+                    jobsList.appendChild(card);
+
+                });
+
+                jobCards =
+                    Array.from(
+                        jobsList.querySelectorAll(".job-list-card")
+                    );
+
+                filterJobs();
+
+            } catch (error) {
+
+                console.error(
+                    "Error loading Firestore jobs:",
+                    error
+                );
+
+            }
+
+        }
+
+        loadFirestoreJobs();
 
 
         /* =========================================
@@ -2569,6 +2710,7 @@ import {
     addDoc,
     doc,
     getDoc,
+    getDocs,
     updateDoc
 } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
 
